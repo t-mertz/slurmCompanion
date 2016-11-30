@@ -1,0 +1,9 @@
+<form action="/cmd/cmd" method="post">
+    {% csrf_token %}
+    {{ cmd }}
+    <br />
+    {{ response }}
+    <br />
+    {{ form }}
+    <input type="submit" value="Submit" />
+</form>

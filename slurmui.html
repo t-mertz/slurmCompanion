@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang='en-US'>
+    <head>
+        <title>SLURM UI</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/style.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container">
+            <h1>
+                SLURM Utility
+            </h1>
+            <form method="POST">
+                <fieldset>
+                    <legend>General Settings</legend>
+                    <p>
+                        <input type="checkbox" id="test-mode">
+                        <label for="test-mode">Test mode</label>
+                    </p>
+                    <p>
+                        <input type="checkbox" id="overwrite-dir">
+                        <label for="overwrite-dir">Overwrite directories</label>
+                    </p>
+                </fieldset>
+                <br />
+                <fieldset>
+                    <legend>SLURM Settings</legend>
+
+                    <p>
+                        <label>Partition:</label>
+                        <select>
+                            <option>test</option>
+                            <option>parallel</option>
+                        </select>
+                    </p>
+                    <p>
+                        <label>Number of CPUs:</label>
+                        <input type="text" name="ncpus" value="24" style="color: #777;" onclick="this.value=''; this.style.color='#000'">
+                    </p>
+                    <p>
+                        <label>Time:</label>
+                        <input type="text" name="time" value="1-00:00:00" style="color: #777;" onclick="this.value=''; this.style.color='#000'">
+                    </p>
+                    <p>
+                        <label>Jobname:</label>
+                        <input type="text" name="jobname">
+                    </p>
+                </fieldset>
+
+                <br />
+
+                <fieldset>
+                    <div id="parameter-form">
+                        <legend>Parameters</legend>
+                        
+                        <div class="parameter-form">
+                            <div class="parameter-name-label" id="parameter-name-1" style="display: none;" colspan="3"></div>
+                            
+                            <p>
+                                <label>Type:</label>
+                                <input type="radio" name="value" value="value" onclick="set_value()" checked>Value
+                                <input type="radio" name="value" value="range" onclick="set_range()">Range
+                            </p>
+
+                            <p>
+                                <label>Name:</label>
+                                <input type="text" value="Parameter name" onchange="document.getElementById('parameter-name-1').innerHTML=this.value; document.getElementById('parameter-name-1').style.display='table-cell';" style="color: #777;" onclick="this.value=''; this.style.color='#000';">
+                            </p>
+                            
+                            <p id="value_form">
+                                <label>Value:</label>
+                                <input type="text" value="value" style="color: #777;" onclick="this.value=''; this.style.color='#000';">
+                            </p>
+                            
+                            <p class="range_form" style="display: none;">
+                                <label>Min:</label>
+                                <input type="text" value="min">
+                            </p>
+                            <p class="range_form" style="display: none;">
+                                <label>Max:</label>
+                                <input type="text" value="max">
+                            </p>
+                            <p class="range_form" style="display: none;">
+                                <label>Step:</label>
+                                <input type="text" value="step">
+                            </p>
+                        </div>
+                    </div>
+                    <br />
+                    <input type="button" value="Add parameter" name="add-parameter" onclick="add_parameter()">
+
+                </fieldset>
+
+                <br />
+                <hr />
+                <input id="submit-btn" type='submit' value="Submit">
+            </form>
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="js/script.js"></script>
+
+    </body>
+
+</html>

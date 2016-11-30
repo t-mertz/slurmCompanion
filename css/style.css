@@ -1,0 +1,61 @@
+td {
+    margin: 20px 0;
+    padding: 10px 10px 10px 0;
+    height: 20px;
+}
+
+fieldset {
+    margin: 10px 0;
+}
+
+.parameter-form {
+    background-color: #F0F0F0;
+    padding: 1em 0;
+    /*border: solid #000 1px;
+    */
+}
+
+form {
+    margin: auto;
+    display: table;
+    width: 60%;
+}
+
+p {
+    display: table-row;
+    width: 100%;
+}
+
+p > label {
+    display: table-cell;
+    margin: 5px 0;
+    width: 50%;
+}
+
+p > input {
+    display: table-cell;
+    margin: 5px 0;
+    
+}
+
+p > select {
+    display: table-cell;
+    margin: 5px 0;
+    
+}
+
+
+.disabled {
+    display: none;
+}
+
+.parameter-name-label {
+    text-align: center;
+    font-size: 2em;
+    font-weight: bold;
+    padding: 0 10px;
+}
+
+h1 {
+    text-align: center;
+}

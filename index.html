@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<head>
+    <title>SLURM UI</title>
+</head>
+<body>
+    <h3>Login</h3>
+    <form method=POST>
+        <label>Username: </label>
+        <input type="text" />
+        <br />
+        <label>Password: </label>
+        <input type="password" />
+        <br />
+        <input type="submit" value="Login"/>
+    </form>
+    <br />
+    <hr />
+    <h3>Proceed without Login</h3>
+    <a href="#">Execute Command</a>
+    <br />
+    <a href="#">View Statistics</a>
+    <br />
+    <form method=POST>
+        <h4>Create SSH Session</h4>
+        <label>URL: </label>
+        <select>
+            <option value="sever1">Server1</option>
+            <option value="sever2">Server2</option>
+            <option value="request">Request new</option>
+        </select>
+        <br />
+        <label>Username: </label>
+        <input type="text" />
+        <br />
+        <label>Password: </label>
+        <input type="password" />
+        <br />
+        <input type="submit" value="Login"/>
+    </form>
+
+</body>
