@@ -1,9 +1,33 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'webcmd/style.css' %}" />
+
+
 <form action="/cmd/cmd" method="post">
     {% csrf_token %}
-    {{ cmd }}
+    
+    <!--
+    <p class="command">{{ cmd }}</p>
+    <p class="response">{{ response }}</p>
     <br />
-    {{ response }}
-    <br />
+    -->
+    <h4>Active Shell</h4>
+    <div class="commandline">
+        {% for c in cmd_res_list %}
+            {% for cl in c.0 %}
+                <div class="command">{{ cl }}</div>
+            {% endfor %}
+            {% for rl in c.1 %}
+                <div class="response">{{ rl }}</div>
+            {% endfor %}
+        {% endfor %}
+    </div>
     {{ form }}
     <input type="submit" value="Submit" />
+</form>
+
+
+<form action="/cmd/clear" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Clear history" />
 </form>
