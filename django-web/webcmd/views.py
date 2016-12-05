@@ -61,8 +61,13 @@ def cmd(request):
             request.session['command_list'].append(cur_cmd[:])
             cur_cind = len(request.session['command_list'])
 
-
-            response_string = "response to " + cmd_string
+            # This is just experimental and will be replaced
+            try:
+                import sshcomm.comm as comm
+                cdata = comm.ConnectionData("url", "username", "password")
+                response_string = comm.run_command(cdata, cmd_string)
+            except:
+                response_string = "response to " + cmd_string
             if 'response_list' not in request.session:
                 request.session['response_list'] = []
             cur_res = Response(response_string, cur_cind)
