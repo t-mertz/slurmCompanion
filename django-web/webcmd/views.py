@@ -67,7 +67,7 @@ def cmd(request):
                 cdata = comm.ConnectionData("url", "username", "password")
                 response_string = comm.run_command(cdata, cmd_string)
             except:
-                response_string = "response to " + cmd_string
+                response_string = "[backend failed] response to " + cmd_string
             if 'response_list' not in request.session:
                 request.session['response_list'] = []
             cur_res = Response(response_string, cur_cind)
