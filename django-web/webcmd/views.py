@@ -64,10 +64,10 @@ def cmd(request):
             # This is just experimental and will be replaced
             try:
                 import sshcomm.comm as comm
-                cdata = comm.ConnectionData("url", "username", "password")
+                cdata = comm.ConnectionData("th.physik.uni-frankfurt.de", "username", "password")
                 response_string = comm.run_command(cdata, cmd_string)
-            except:
-                response_string = "[backend failed] response to " + cmd_string
+            except Exception as e:
+                response_string = "[backend failed: {}] response to ".format(e) + cmd_string
             if 'response_list' not in request.session:
                 request.session['response_list'] = []
             cur_res = Response(response_string, cur_cind)

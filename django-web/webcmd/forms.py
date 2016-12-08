@@ -1,7 +1,7 @@
 from django import forms
 
 class CmdForm(forms.Form):
-    input_cmd = forms.CharField(label='Enter Command')
+    input_cmd = forms.CharField(label='Enter Command', required=False)
     #output_field = forms.CharField(widget=forms.Textarea, required=False)
 
     """

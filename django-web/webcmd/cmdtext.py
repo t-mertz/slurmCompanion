@@ -1,3 +1,5 @@
+import sys
+
 MAX_NUM_STORED_LINES = 200
 MAX_NUM_LINES = 10
 LINEWIDTH = 80
@@ -87,7 +89,7 @@ def num_lines(string):
     line_list = string.split("\n")
     num = len(line_list)
     for l in line_list:
-        num += (len(string) / LINEWIDTH > 1)
+        num += (len(string) // LINEWIDTH + 1)
     
     return num
 
@@ -100,7 +102,7 @@ def get_lines(string):
 
     new_list = []
     for l in line_list:
-        new_list += [l[i:i+LINEWIDTH] for i in range(len(l) // LINEWIDTH + 1)]
+        new_list += [l[i*LINEWIDTH:(i+1)*LINEWIDTH] for i in range(len(l) // LINEWIDTH + 1)]
     
     return new_list
 
@@ -120,3 +122,63 @@ class Response(CmdText):
 
         if (cind is not None):
             self.command = cind
+
+
+class TestCase(object):
+    """
+    Base class for tests.
+    """
+
+    @classmethod
+    def run(cls):
+        """
+        Runs all tests (methods which begin with 'test').
+        """
+        #print(cls)
+        max_len = max([len(a) for a in cls.__dict__])
+        for key in cls.__dict__:
+            if key.startswith("test"):
+                fill = max_len - len(key)
+                sys.stdout.write("Testing {} ...{} ".format(key, '.'*fill))
+                try:
+                    cls.__dict__[key]()
+                except:
+                    raise
+                else:
+                    print("Test passed!")
+        print("All tests passed!")
+
+
+class StaticTest(TestCase):
+    """
+    Tests for static methods.
+    """
+
+    def test_get_lines_with_empty_string():
+        assert get_lines("") == [""]
+    
+    def test_get_lines_with_short_string():
+        assert len(get_lines("a"*(LINEWIDTH-1))) == 1
+    
+    def test_get_lines_with_long_string():
+        assert len(get_lines("a"*(2*LINEWIDTH-1))) == 2
+    
+    def test_get_lines_with_very_long_string():
+        assert len(get_lines("a"*(4*LINEWIDTH-1))) == 4
+    
+    def test_get_lines_with_long_text_string():
+        text = "This is a test string, which should simulate real text. The command should" \
+         + " correctly split this text into two lines."
+        LINEWIDTH = 80
+        correct_lines = [text[:LINEWIDTH], text[LINEWIDTH:]]
+        assert len(get_lines(text)) == len(text) // LINEWIDTH + 1
+        assert get_lines(text) == correct_lines
+    
+
+
+class CmdTextTest(object):
+    """
+    Tests for CmdText class methods.
+    """
+
+    pass

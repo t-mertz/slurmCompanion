@@ -1,11 +1,12 @@
 import paramiko
 import subprocess
 import sys
-import exceptions
+#import exceptions # no longer needed, as exceptions has been moved to builtins in Python 3
 
 SYSTEM = sys.platform # the platform the server is running on
 MEGABYTE = 1024**2    # size of one megabyte in bytes
 MAX_FILE_SIZE = 1 * MEGABYTE
+
 
 class UnsupportedOSError(Exception):
     def __init__(self, value):
@@ -48,6 +49,12 @@ class ShhSession(object):
     def __init__(self):
         self._client = paramiko.client.SSHClient()
         self._client.load_system_host_keys()
+
+        # this should be removed in production
+        self._client.set_missing_host_key_policy(paramiko.client.AutoAddPolicy())
+        print("Warning, using auto-add host key!")
+        #
+        
         self._username = None
     
     def connect(self, cdata):
