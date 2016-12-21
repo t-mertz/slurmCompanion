@@ -33,4 +33,5 @@ def ws_connect(message):
     
     ssh_session = None
     
-    message.channel_session['ssh_session'] = ssh_session
+    try:
+        message.channel_session['ssh_session'] = ssh_session

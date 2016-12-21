@@ -170,17 +170,48 @@ def run_command(cdata, cmd_string):
     client = paramiko.client.SSHClient()
 
     client.load_system_host_keys()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
     client.connect(cdata.url(), username=cdata.username(), password=cdata.password())
 
     # execute command
-    response = client.exec_command(cmd_string)
+    stdin, stdout, stderr = client.exec_command(cmd_string, timeout=10)
 
+    #import time
+    #time.sleep(2)
+    stdout_txt = stdout.read().decode("utf-8")
+    stdout_txt += stderr.read().decode("utf-8")
+
+    """
+    # retrieve output
+    if stdout.channel.recv_ready():
+        stdout_txt = stdout.read().decode("utf-8")
+    else:
+        stdout_txt = "[nothing here] {}".format(stdout.channel.recv_ready())
+    """
+    """
+    # check for remaining output
+    loop_count = 0
+    while not stdout.channel.recv_exit_status():
+        if stdout.channel.recv_ready():
+            stdout_txt += stdout.read().decode("utf-8")
+            loop_count += 1
+
+        if loop_count > 1:
+            stdout_txt += "[aborting]"
+            break
+    """
+
+    # make sure a new line is triggered
+    if stdout_txt == "":
+        stdout_txt += " \n"
+    
     # make sure session is terminated properly
     client.close()
 
     # response = [stdin, stdout, stderr]
-    return response
+    #return response
+    return stdout_txt
 
 
 def execute_in_session(session, cmd_string):

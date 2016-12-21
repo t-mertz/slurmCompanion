@@ -57,14 +57,14 @@ def cmd(request):
             cmd_string = form.cleaned_data['input_cmd']
             if 'command_list' not in request.session:
                 request.session['command_list'] = []
-            cur_cmd = Command(cmd_string)
+            cur_cmd = Command("user@192.168.178.112:~$" + PROMPT_SYMBOL + cmd_string)
             request.session['command_list'].append(cur_cmd[:])
             cur_cind = len(request.session['command_list'])
 
             # This is just experimental and will be replaced
             try:
                 import sshcomm.comm as comm
-                cdata = comm.ConnectionData("th.physik.uni-frankfurt.de", "username", "password")
+                cdata = comm.ConnectionData("192.168.178.112", "user", " ")
                 response_string = comm.run_command(cdata, cmd_string)
             except Exception as e:
                 response_string = "[backend failed: {}] response to ".format(e) + cmd_string
