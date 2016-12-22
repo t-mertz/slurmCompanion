@@ -40,6 +40,12 @@ class ConnectionData(object):
     
     def password(self):
         return self._pwd
+    
+    def dict(self):
+        """
+        Return a dictionary containing username and url.
+        """
+        return dict([['username', self._uname], ['url', self._url]])
 
 
 class ShhSession(object):
@@ -152,6 +158,16 @@ class InteractiveShhSession(ShhSession):
         
         send_file(filename)
 
+    def get_cwd(self):
+        """
+        Return the current working directory.
+
+        Since Paramiko doesn't maintain an open channel, we store the current 
+        working directory in a member `cwd`.
+        The working directory is managed completely by the Session and all
+        commands attempting to change it are intercepted.
+        """
+        return self._cwd
 
 class Response(object):
     
@@ -260,3 +276,25 @@ def send_file(filename):
     raise NotImplementedError
 
 
+
+class ManagedCWD:
+    """
+    Function decorator. Changes the working directory on the remote server
+    before the function is executed.
+    """
+    def correct_cwd(session):
+        """
+        Change to the cwd.
+        """
+        session.execute_in_session("cd " + session.cwd)
+
+    def __init__(self, f):
+        self._f = f
+    
+    def __call__(self, *args):
+        if (len(args) >= 1):
+            session = args[0]
+            correct_cwd(session)
+            self._f(*args[1:])
+        else:
+            pass
