@@ -1,1 +1,29 @@
-<a href={% url 'cmd' %}>Command Prompt</a>
+
+Navigation:
+<ul>
+    <li>
+        <a href={% url 'cmd' %}>Command Prompt</a>
+    </li>
+    <li>
+        File Manager
+    </li>
+    <li>
+        SLURM UI
+    </li>
+    <li>
+        SLURM Statistics
+    </li>
+    <li>
+        Support
+    </li>
+</ul>
+
+Login:
+<form action={% url 'siteindex' %} method="post">
+    {% csrf_token %}
+
+    <table>
+        {{ form.as_table }}
+    </table>
+    <input type="submit" label="Login"/>
+</form>
