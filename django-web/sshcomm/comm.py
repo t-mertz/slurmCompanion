@@ -2,6 +2,7 @@ import paramiko
 import subprocess
 import sys
 #import exceptions # no longer needed, as exceptions has been moved to builtins in Python 3
+import collections # deque
 
 SYSTEM = sys.platform # the platform the server is running on
 MEGABYTE = 1024**2    # size of one megabyte in bytes
@@ -177,9 +178,92 @@ class Response(object):
     
 
 
+class CommandQueue(object):
+    """
+    Stores commands that are to be executed in order.
+
+    Since paramiko closes the channel after each command is executed, we have to
+    chain commands by hand.
+    """
+    
+    separator = " ; " # separates two commands
+
+    def __init__(self, *args):
+        if (args == None):
+            self._cmd_list = []
+        else:
+            try:
+                args = [str(a) for a in args]
+            except:
+                raise TypeError("Commands need to be strings or convertable to strings")
+            
+            self._cmd_list = args
+    
+    def combine(self):
+        """
+        Combine the commands in the queue to one single chained command.
+
+        Returns:
+        * (string) command
+
+        Example:
+        CommandQueue("abc", "def").combine() -> "abc ; def"
+        """
+        cmd_string = ""
+        cmd_queue = collections.deque(self._cmd_list)
+
+        while (len(cmd_queue) > 1):
+            cmd_string += cmd_queue.popleft()
+            cmd_string += CommandQueue.separator
+        
+        if (len(cmd_queue) > 0):
+            cmd_string += cmd_queue.pop()
+    
+        return cmd_string
+    
+    def add(self, *args):
+        """
+        Add arguments to the CommandQueue.
+        """
+        try:
+            args = [str(a) for a in args]
+        except:
+            raise TypeError("Commands need to be strings or convertable to strings")
+        
+        self._cmd_list += args
+    
+    def clear(self):
+        """
+        Delete all commands from the CommandQueue.import
+        """
+        self._cmd_list = []
+    
+    def __len__(self):
+        return len(self._cmd_list)
+    
+    def __str__(self):
+        return "CommandQueue(" + str(self._cmd_list) + ")"
+    
+    def __eq__(self, other):
+        if isinstance(other, CommandQueue):
+            return self._cmd_list == other._cmd_list
+        else:
+            return False
+    
+    def as_list(self):
+        """
+        Return the list of commands stored in the queue.
+        """
+        return self._cmd_list
+
+
 def run_command(cdata, cmd_string):
     """
-    Executes a command cmd_string in a session specified by cdata.
+    Execute a command cmd_string in a session specified by cdata.
+
+    Parameters:
+    * cdata         : cdata object containing the connection data
+    * cmd_string    : (string) command to be executed
     """
 
     # create client object
@@ -230,6 +314,26 @@ def run_command(cdata, cmd_string):
     return stdout_txt
 
 
+
+def run_mult_commands(cdata, command_list):
+    """
+    Execute a list of commands in a session configured by the connection data `cdata`.
+
+    Parameters:
+    * cdata         : cdata object
+    * command_list  : list of commands (string)
+
+    Returns:
+    * out_string    : (string) output string read from the channel after running
+                      the command
+    """
+    
+    cmd_queue = CommandQueue(*command_list)
+
+    out_string = run_command(cdata, cmd_queue.combine())
+
+    return out_string
+
 def execute_in_session(session, cmd_string):
     """
     Executes a command in a running session.
@@ -279,22 +383,39 @@ def send_file(filename):
 
 class ManagedCWD:
     """
-    Function decorator. Changes the working directory on the remote server
-    before the function is executed.
+    Function decorator for functions that return command strings. 
+    
+    Prepends a cd command before the command that is retured by the function.
+    When the command is executed, the working directory on the remote server is
+    changed before the actual command is executed.
     """
     def correct_cwd(session):
         """
-        Change to the cwd.
+        Return a CommandQueue that changes to the current working directory.
+
+        Parameters:
+        * session   : (SSHSession) session
+
+        Returns:
+        * cd_cmd    : (string) command to change to cwd
         """
-        session.execute_in_session("cd " + session.cwd)
+        cd_cmd = "cd " + str(session.get_cwd())
+        
+        return CommandQueue([cd_cmd])
 
     def __init__(self, f):
-        self._f = f
+        self._f = f # store function to decorate
     
     def __call__(self, *args):
-        if (len(args) >= 1):
-            session = args[0]
-            correct_cwd(session)
-            self._f(*args[1:])
-        else:
+
+        if (len(args) >= 1): # function has arguments
+            session = args[0] # session is first argument
+            cd_cmd = correct_cwd(session)
+            other_cmd = self._f(*args[1:]) # actual command
+
+            return cd_cmd.add([other_cmd]).combine() # return combined command, cd first
+
+        else: # function has no arguments
             pass
+            # this should raise an exception, since at least the session \
+            # is needed
