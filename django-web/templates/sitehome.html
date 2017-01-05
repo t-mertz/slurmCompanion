@@ -1,6 +1,30 @@
+{% if form %}
+    Login:
+    <form action={% url 'siteindex' %} method="post">
+        {% csrf_token %}
+
+        <table>
+            {{ form.as_table }}
+        </table>
+        <input type="submit" value="Login"/>
+    </form>
+{% elif not login_failed %}
+    Logged in as {{ username }}.
+    <form>
+        <input type="submit" value="Logout" action="&logout"/>
+    </form>
+{% endif %}
+
+{% if login_failed %}
+    <div class="warning">Login failed!</div>
+{% endif %}
+
 
 Navigation:
 <ul>
+    <li>
+        My Account
+    </li>
     <li>
         <a href={% url 'cmd' %}>Command Prompt</a>
     </li>
@@ -18,12 +42,3 @@ Navigation:
     </li>
 </ul>
 
-Login:
-<form action={% url 'siteindex' %} method="post">
-    {% csrf_token %}
-
-    <table>
-        {{ form.as_table }}
-    </table>
-    <input type="submit" label="Login"/>
-</form>

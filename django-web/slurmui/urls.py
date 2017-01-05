@@ -20,6 +20,8 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.sitehome, name="siteindex"),
+    url(r'^info/', include('infopage.urls')),
     url(r'^cmd/', include('webcmd.urls')),
+    url(r'^support/', include('support.urls')),
     url(r'^admin/', admin.site.urls),
 ]
