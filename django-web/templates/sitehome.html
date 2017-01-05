@@ -1,15 +1,49 @@
-{% if form %}
-    Login:
-    <form action={% url 'siteindex' %} method="post">
-        {% csrf_token %}
+{% load static %}
 
-        <table>
-            {{ form.as_table }}
-        </table>
-        <input type="submit" value="Login"/>
-    </form>
+<link rel="stylesheet" type="text/css" href="{% static 'mainpage.css' %}" />
+
+<div class="nav">
+    Navigation:
+    <ul>
+        <li>
+            <a>Info</a>
+        </li>
+        <li>
+            <a>My Account</a>
+        </li>
+        <li>
+            <a href={% url 'cmd' %}>Command Prompt</a>
+        </li>
+        <li>
+            <a>File Manager</a>
+        </li>
+        <li>
+            <a>SLURM UI</a>
+        </li>
+        <li>
+            <a>SLURM Statistics</a>
+        </li>
+        <li>
+            <a>Support</a>
+        </li>
+    </ul>
+</div>
+
+<div class="content">
+{% if form %}
+    <div id="login-form">
+        Login:
+        <form action={% url 'siteindex' %} method="post">
+            {% csrf_token %}
+
+            <table>
+                {{ form.as_table }}
+            </table>
+            <input type="submit" value="Login"/>
+        </form>
+    </div>
 {% elif not login_failed %}
-    Logged in as {{ username }}.
+    <div class="login-msg">Logged in as <span class="username">{{ username }}</span>.</div>
     <form>
         <input type="submit" value="Logout" action="&logout"/>
     </form>
@@ -18,27 +52,4 @@
 {% if login_failed %}
     <div class="warning">Login failed!</div>
 {% endif %}
-
-
-Navigation:
-<ul>
-    <li>
-        My Account
-    </li>
-    <li>
-        <a href={% url 'cmd' %}>Command Prompt</a>
-    </li>
-    <li>
-        File Manager
-    </li>
-    <li>
-        SLURM UI
-    </li>
-    <li>
-        SLURM Statistics
-    </li>
-    <li>
-        Support
-    </li>
-</ul>
-
+</div>

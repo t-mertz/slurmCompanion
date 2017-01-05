@@ -11,6 +11,9 @@ def sitehome(request):
         if logout in request.GET:
             logout(request)
         context = {'form' : LoginForm() }
+
+        if request.user.is_authenticated:
+            context = {'username' : request.user.username}
     
     else:
         context = {}
