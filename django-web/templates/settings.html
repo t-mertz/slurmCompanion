@@ -1,0 +1,26 @@
+{% extends 'navigation.html' %}
+
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'settings.css' %}" />
+
+{% block content %}
+    <form>
+        {% csrf_token %}
+        <fieldset>
+            <legend>Add a server</legend>
+            <table>
+                {% for field in add_server_form %}
+                    <tr><th>{{ field.label_tag }}</th>
+                    <td>{{ field }}</td>
+                    {% if field.help_text %}
+                        <td>{{ field.help_text }}</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                {% endfor %}
+                    </tr>
+            </table>
+            <input type="submit" value="Add Server" action="" />
+        </fieldset>
+    </form>
+{% endblock %}

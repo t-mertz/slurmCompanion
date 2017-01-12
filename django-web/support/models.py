@@ -1,8 +1,10 @@
 from django.db import models
-from django.forms import widgets
+
 
 # Create your models here.
 
 class SupportTicket(models.Model):
-    title = models.CharField()
-    content = models.CharField(widget=widgets.TextArea)
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    pub_date = models.DateTimeField()
+    user = models.CharField(max_length=100)

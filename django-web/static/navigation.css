@@ -1,0 +1,96 @@
+
+header.page-header {
+    background-color: #44f;
+    font-weight: bold;
+    font-size: 2em;
+    color: white;
+    margin: 0 0;
+    padding: 0 10px;
+    text-align: center;
+}
+
+footer.page-footer {
+    background-color: #44f;
+    width: 100%;
+    height: 5%;
+}
+
+footer .footer-text {
+    color: white;
+    text-align: center;
+    height: 100%;
+    padding-top: auto;
+    padding-bottom: auto;
+}
+
+.username {
+    text-decoration: underline;
+}
+
+body {
+    background-color: #efefef;
+}
+
+
+@media(min-width:977px) {
+    .nav {
+        width : 20%;
+        height: 100%; /* Full height */
+        position: fixed; /* Make it stick, even on scroll */
+        overflow: auto; /* Enable scrolling if the sidenav has too much content */
+        display: block;
+        
+    }
+
+    .nav > ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        width: 200px;
+        background-color: #e3e3e3;
+    }
+
+    .nav li a {
+        display: block;
+        color: #000;
+        padding: 8px 16px;
+        text-decoration: none;
+    }
+
+    .nav li a:hover {
+        background-color: #2e4ee6;
+        color: white;
+    }
+
+    #login-form {
+        width : 100%;
+        display: block;
+        /*margin-left: 200px;*/
+        padding: 10px 20px;
+        
+    }
+
+    .login-msg {
+        float: right;
+        display: block;
+        width: 100%;
+    }
+
+    .warning {
+        color: #a80000;
+        background-color: #ffcccc;
+        border: 1px solid #bd0000;
+        border-radius: 5px;
+        padding: 10px;
+        margin: 10px 20px;
+    }
+
+    .content {
+        margin-left: 210px;
+    }
+
+    header.page-header {
+        padding: 20px 20px;
+    }
+}
+

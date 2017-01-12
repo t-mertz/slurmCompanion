@@ -1,67 +1,27 @@
-from testenv import TestCase
-from comm import CommandQueue
+from django.test import TestCase
 
-class CommandQueueTests(TestCase):
+from .models import RemoteServer
+import datetime
 
-    def test_create_empty():
-        cqueue = CommandQueue()
+# Create your tests here.
 
-        assert len(cqueue) == 0
+class RemoteServerTests(TestCase):
+    """Tests for RemoteServer model"""
     
-    def test_create_one():
-        cqueue = CommandQueue("abc")
+    def test_get_installed_servers_empty(self):
+        self.assertEqual(RemoteServer.get_installed_servers(), [])
 
-        assert cqueue.as_list() == ["abc"], "['abc'] != " + str(cqueue.as_list())
-    
-    def test_create_two_equal():
-        cqueue = CommandQueue("abc", "abc")
+    def test_get_installed_servers_one(self):
+        new_server = RemoteServer(server_url="", server_name="abc", date_added=datetime.date(2016,1,1))
+        new_server.save()
 
-        assert cqueue.as_list() == ["abc", "abc"]
+        self.assertEqual(RemoteServer.get_installed_servers(), [("abc", "abc")])
 
-    def test_create_two_different():
-        cqueue = CommandQueue("abc", "def")
+    def test_get_installed_servers_two(self):
+        new_server = RemoteServer(server_url="", server_name="abc", date_added=datetime.date(2016,1,1))
+        new_server.save()
 
-        assert cqueue.as_list() == ["abc", "def"]
-
-    def test_add_one():
-        cqueue = CommandQueue("1")
-
-        cqueue.add("abc")
-
-        assert cqueue == CommandQueue("1", "abc"), str(cqueue) + " != " + "CommandQueue(['1', 'abc'])"
-    
-    def test_add_two_equal():
-        cqueue = CommandQueue("1")
-
-        cqueue.add("abc")
-        cqueue.add("abc")
-
-        assert cqueue == CommandQueue("1", "abc", "abc"), str(cqueue) + " != " + "CommandQueue(['1', 'abc', 'abc'])"
-    
-    def test_add_two_different():
-        cqueue = CommandQueue("1")
-
-        cqueue.add("abc")
-        cqueue.add("def")
-
-        assert cqueue == CommandQueue("1", "abc", "def")
-    
-    def test_combine_empty():
-        cqueue = CommandQueue()
-
-        assert cqueue.combine() == ""
-
-    def test_combine_one():
-        cqueue = CommandQueue("abc")
-
-        assert cqueue.combine() == "abc"
-    
-    def test_combine_two_equal():
-        cqueue = CommandQueue("abc", "abc")
-
-        assert cqueue.combine() == "abc" + CommandQueue.separator + "abc"
-    
-    def test_combine_two_different():
-        cqueue = CommandQueue("abc", "def")
-
-        assert cqueue.combine() == "abc" + CommandQueue.separator + "def"
+        new_server = RemoteServer(server_url="", server_name="def", date_added=datetime.date(2016,1,1))
+        new_server.save()
+        
+        self.assertEqual(RemoteServer.get_installed_servers(), [("abc", "abc"), ("def", "def")])

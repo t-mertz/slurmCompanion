@@ -32,6 +32,9 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'webcmd.apps.WebcmdConfig',
+    'infopage.apps.InfopageConfig',
+    'support.apps.SupportConfig',
+    'sshcomm.apps.SshcommConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

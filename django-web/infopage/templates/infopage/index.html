@@ -1,0 +1,13 @@
+{% extends "navigation.html" %}
+
+{% block content %}
+    {% if info_list %}
+        {% for info in info_list %}
+            <h3>{{info.title}}</h3>
+            By {{info.author}}, {{info.pub_date}}
+            <p>{{info.content}}</p>
+        {% endfor %}
+    {% else %}
+        <p>No info available.</p>
+    {% endif %}
+{% endblock %}

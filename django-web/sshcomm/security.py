@@ -14,6 +14,22 @@ def create_key(username, password):
 
     return m.digest()
 
+def bkey_to_ukey(key):
+    """
+    Convert bytes key to unicode string.
+    Makes key JSON serializable.
+    """
+    return key.decode('unicode_escape')
+
+def ukey_to_bkey(key):
+    """
+    Convert unicode string to byte string.
+    Needed for encrypt and decrypt methods.
+    """
+    bkey = bytes(key, 'unicode_escape')
+
+
+
 
 def encrypt(message, key):
     """
@@ -21,7 +37,7 @@ def encrypt(message, key):
 
     Encrypt message with key as password.
     """
-    simplecrypt.encrypt(key, message)
+    encrypt(key, message)
 
 
 def decrypt(message, key):
@@ -30,4 +46,4 @@ def decrypt(message, key):
 
     Decrypt message with key as password.
     """
-    simplecrypt.decrypt(key, message)
+    decrypt(key, message)
