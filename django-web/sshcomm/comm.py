@@ -3,6 +3,7 @@ import subprocess
 import sys
 #import exceptions # no longer needed, as exceptions has been moved to builtins in Python 3
 import collections # deque
+import os # path.split, path.join
 
 SYSTEM = sys.platform # the platform the server is running on
 MEGABYTE = 1024**2    # size of one megabyte in bytes
@@ -121,6 +122,8 @@ class InteractiveShhSession(ShhSession):
         displayed on the website.
         """
         pass
+
+        raise NotImplementedError
     
     def print_file(self, filename):
         """
@@ -169,6 +172,23 @@ class InteractiveShhSession(ShhSession):
         commands attempting to change it are intercepted.
         """
         return self._cwd
+    
+    def exec_command(self, cmd_string):
+        """
+        Execute a command within the session on the remote machine.
+
+        Return the stdout response.
+        """
+        dir = check_cd(cmd_string)
+
+        if dir:
+            self._cwd = update_cwd(self._cwd, dir)
+        else:
+            # nothing to be done. working directory has not been changed
+            pass
+
+        # exec_command() returns a tuple (stdin, stdout, stderr)
+        return self._client.exec_command(cmd_string)[1]
 
 class Response(object):
     
@@ -419,3 +439,65 @@ class ManagedCWD:
             pass
             # this should raise an exception, since at least the session \
             # is needed
+
+def check_cd(cmd_string):
+    """
+    Check command string for cd command and return the new directory.
+    """
+    arg_list = cmd_string.split()
+
+    if len(arg_list) <= 2:
+        if arg_list[0] == "cd":
+            return arg_list[1] if len(arg_list) == 1 else '.'
+        else:
+            return None
+    else:
+        return None
+
+def command_list_to_string(clist):
+    """
+    Recombine command list into one single string.
+    Essentially reverses the string.split() method.
+    """
+    cmd_str = ""
+    i = 0
+    while i < len(clist)-1:
+        cmd_str += clist[i]
+        cmd_str += " "
+    cmd_str += clist[-1]
+
+def update_cwd(cwd, dir):
+
+    path_list = splitpath(dir)
+    cwd_list = splitpath(cwd)
+
+    if path_list[0] == '' or path_list[0] == '~':
+        # absolute path
+        return dir
+    else:
+        #while not len(path_list) == 0:
+        #    cur_dir = path_list.pop(0)
+        #   cwd = os.path.join(cwd, cur_dir)
+        os.path.join(*cwd_list, *path_list)
+
+def splitpath(path):
+    """
+    Split path into tuple of strings. Splits along slashes. 
+    """
+    head = path
+    path_list = []
+    while head != '':
+        head, tail = os.path.split(head)
+        path_list.append(tail)
+    
+    return path_list[::-1]
+
+def splitpath_r(path):
+    """
+    Recursive implementation of splitpath().
+    """
+    head, tail = os.path.split(path)
+    if head == '':
+        return [tail]
+    else:
+        return splitpath(head) + [tail]

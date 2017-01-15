@@ -1,5 +1,8 @@
 import hashlib # sha512
 from simplecrypt import encrypt, decrypt
+from Crypto.Cipher import AES
+from Crypto import Random
+import sshcomm.pybytes2str as pybytes2str # encode, decode
 
 def create_key(username, password):
     """
@@ -7,17 +10,49 @@ def create_key(username, password):
 
     Uses sha512 method from hashlib.
     """
-    hstring = username + password # this could be something more involved
+
+    # convert to bytes
+    buname = bytes(username)
+    bpw = bytes(password)
+
+    data = buname + bpw # this will be hashed and then used as key. 
+                        # could be something more involved
 
     m = hashlib.sha512() # use Crypto.hash instead?
-    m.update(hstring)
+    m.update(data)
 
     return m.digest()
+
+def create_string_key(username, password):
+    """
+    Create a hash key (encoded as string) from a username and password.
+    Must be decoded before use.
+
+    Uses sha512 method from hashlib.
+    """
+    byte_key = create_key(username, password)
+
+    return pybytes2str.encode(byte_key)
+
+def encode_key(byte_key):
+    """
+    Encode bytes key to string.
+    """
+    return pybytes2str.encode(byte_key)
+
+def retrieve_key(string_key):
+    """
+    Decode the string key into bytes key.
+    """
+    return pybytes2str.decode(string_key)
+
 
 def bkey_to_ukey(key):
     """
     Convert bytes key to unicode string.
     Makes key JSON serializable.
+
+    ! DO NOT USE. DOES NOT WORK !
     """
     return key.decode('unicode_escape')
 
@@ -25,10 +60,52 @@ def ukey_to_bkey(key):
     """
     Convert unicode string to byte string.
     Needed for encrypt and decrypt methods.
+
+    ! DO NOT USE. DOES NOT WORK !
     """
-    bkey = bytes(key, 'unicode_escape')
+    return bytes(key, 'unicode_escape')
 
+def crop_key(key, size):
+    """
+    Crop a given key to *size* bytes.
+    """
+    base_size = len(key)
+    stride = base_size // size
+    new_key = key[::stride]
 
+    new_key = new_key if len(new_key) == size else new_key[size]
+
+    return new_key
+
+def encrypt_Crypto(message, key):
+    """
+    Wrapper for Crypto AES cypher.
+
+    Encrypt message with key as password.
+    """
+    cypher = AES.new()
+
+    key16 = crop_key(key, 16)
+    cipher = AES.new(key, AES.MODE_CFB)
+
+    msg = cipher.encrypt(bytes(message))
+
+    return msg
+
+def decrypt_Crypto(message, key):
+    """
+    Wrapper for Crypto AES cypher.
+
+    Decrypt message with key as password.
+    """
+    cypher = AES.new()
+
+    key16 = crop_key(key, 16)
+    cipher = AES.new(key, AES.MODE_CFB)
+
+    msg = cipher.decrypt(bytes(message))
+
+    return msg
 
 
 def encrypt(message, key):
@@ -37,7 +114,7 @@ def encrypt(message, key):
 
     Encrypt message with key as password.
     """
-    encrypt(key, message)
+    return encrypt(key, message)
 
 
 def decrypt(message, key):
@@ -46,4 +123,4 @@ def decrypt(message, key):
 
     Decrypt message with key as password.
     """
-    decrypt(key, message)
+    return decrypt(key, message)

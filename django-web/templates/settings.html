@@ -3,8 +3,13 @@
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'settings.css' %}" />
 
+
 {% block content %}
-    <form>
+    {% if error_message %}
+        <div class="warning">{{ error_message }}</div>
+    {% endif %}
+
+    <form action={% url 'settings_addserver' %} method="POST">
         {% csrf_token %}
         <fieldset>
             <legend>Add a server</legend>
@@ -20,7 +25,7 @@
                 {% endfor %}
                     </tr>
             </table>
-            <input type="submit" value="Add Server" action="" />
+            <input type="submit" value="Add Server" />
         </fieldset>
     </form>
 {% endblock %}

@@ -58,6 +58,9 @@ def settingspage(request):
 
 def serversettings_addserver(request):
 
+    # initialize context
+    context = {}
+
     if (request.method == "POST"):
         form = AddSshServerForm(request.POST)
 
@@ -75,16 +78,18 @@ def serversettings_addserver(request):
             if (UserData.objects.get(owner__exact=request.user, server__exact=server)):
                 # entry already existed
                 pass
+                error_message = "Server {} already existed.".format(server)
             else:
                 # encrypt username and password
                 hashkey = security.create_key(request.user.username, loc_password)
                 
                 # store the hashkey in session
-                request.session['hashkey'] = hashkey
+                request.session['hashkey'] = security.encode_key(hashkey)
                 
+
                 # encrypt credentials for storage
-                crypt_uname = security.encrypt(hashkey, username)
-                crypt_pw = security.encrypt(hashkey, password)
+                crypt_uname = security.encrypt_Crypto(hashkey, username)
+                crypt_pw = security.encrypt_Crypto(hashkey, password)
 
                 # create entry
                 new_data = UserData(owner=request.user, server=server, user_name=crypt_uname, user_password=crypt_pw)
@@ -95,8 +100,15 @@ def serversettings_addserver(request):
         else:
             # Form is not valid
             pass
+            error_message = "Form is not valid."
         
-    context = {
+    if error_message:
+        context.update({'error_message': error_message})
+    
+    """
+    context.update({
         'add_server_form': AddSshServerForm(),
-    }
-    return render(request, 'settings.html', context=context)
+    })
+    """
+    return render(request, 'server_settings_red.html', context=context)
+
