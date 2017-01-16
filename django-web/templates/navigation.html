@@ -1,8 +1,15 @@
+<!DOCTYPE html>
+<html>
 {% load static %}
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/navigation.css' %}" />
+    {% block styles %}
+    {% endblock %}
+    {% block scripts %}
+    {% endblock %}
+</head>
 
-<link rel="stylesheet" type="text/css" href="{% static 'navigation.css' %}" />
-
-
+<body>
 <header class="page-header">
     SLURM Companion Utilities
 </header>
@@ -43,3 +50,5 @@
         Copyright 2016 Thomas Mertz
     </div>
 </footer>
+</body>
+</html>

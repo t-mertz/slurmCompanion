@@ -1,4 +1,4 @@
-p {
+.cmdWindow p {
     font-family: Courier;
 }
 
@@ -11,9 +11,5 @@ div.command, div.response {
 }
 
 .response {
-    font-family: Courier;
-}
-
-div {
     font-family: Courier;
 }

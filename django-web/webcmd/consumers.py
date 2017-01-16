@@ -1,5 +1,6 @@
-from channes import Channel
+from channels import Channel
 
+import json
 import sshcomm.comm as comm
 from .cmdtext import CmdText
 
@@ -15,7 +16,7 @@ def format_command(cmd, sinfo):
     sinfo : dictionary containing the keys 'username', 'server', 'directory'
     """
     return SHELL_PROMPT_STRING.format(sinfo['username'],
-                                      sinfo['server'],
+                                      sinfo['url'],
                                       sinfo['directory']) + cmd
 
 def ssh_cmd(message):
@@ -23,7 +24,9 @@ def ssh_cmd(message):
     Retrieve SSH session of the channel and execute the command.
     Send the response over the channel.
     """
-    cmd_string = message.content['command_string']
+    #cmd_string = json.loads(message.content)['command_string']
+    print(message.content)
+    cmd_string = json.loads(message.content['text'])['command_string']
 
     """
     # retrieve SSH session
@@ -42,25 +45,26 @@ def ssh_cmd(message):
     sinfo.update({'directory': '~'})
 
     # send command back for quick update
-    msg.reply_channel.send({
-        "command_string": format_command(cmd_string, sinfo),
-    })
+    message.reply_channel.send({"text": json.dumps({
+        "command_string": [format_command(cmd_string, sinfo)],
+    })})
 
     # execute command
     try:
         response_string = comm.run_command(cdata, cmd_string)
     except Exception as e:
-        response_string = "[backend failed: {}] response to ".format(e) + cmd_string
+        response_string = ["[backend failed: {}] response to ".format(e) + cmd_string]
     
     
     # send response back
-    msg.reply_channel.send({
+    message.reply_channel.send(
+        {"text": json.dumps({
         #"command_string": cmd_string,
         "response_string": response_string,
-    })
+        })})
 
 
-
+'''
 @channel_session_user_from_http
 def ws_connect(message):
     """
@@ -72,3 +76,7 @@ def ws_connect(message):
     
     try:
         message.channel_session['ssh_session'] = ssh_session
+    except:
+        raise
+
+'''

@@ -1,5 +1,5 @@
 from channels.routing import route
-from webcmd.consumers import 
+from webcmd.consumers import ssh_cmd
 
 channel_routing = [
     #route("http.request", "myapp.consumers.http_consumer"),
