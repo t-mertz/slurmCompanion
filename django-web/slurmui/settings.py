@@ -32,6 +32,9 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'webcmd.apps.WebcmdConfig',
+    'infopage.apps.InfopageConfig',
+    'support.apps.SupportConfig',
+    'sshcomm.apps.SshcommConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -120,5 +123,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.file'

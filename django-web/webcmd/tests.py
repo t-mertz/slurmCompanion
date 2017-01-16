@@ -1,6 +1,7 @@
 from django.test import TestCase
+from django.urls import reverse
 
-import cmdtext
+import webcmd.cmdtext as cmdtext
 from .forms import CmdForm
 
 
@@ -13,14 +14,14 @@ class CmdTextTests(TestCase):
         cmd_text = cmdtext.CmdText()
         cmd_text.insert("a\nb")
 
-        self.assert_is(cmd_text.num_lines(), 2)
+        self.assertEqual(cmd_text.num_lines, 2)
     
     def test_num_lines_with_one_line(self):
 
         cmd_text = cmdtext.CmdText()
         cmd_text.insert("a")
 
-        self.assert_is(cmd_text.num_lines(), 1)
+        self.assertEqual(cmd_text.num_lines, 1)
 
     def test_linebreak_characters(self):
         
@@ -30,7 +31,7 @@ class CmdTextTests(TestCase):
 
         cmd_text.insert(text)
 
-        self.assert_is(cmd_text.num_lines(), 4)
+        self.assertEqual(cmd_text.num_lines, 5)
 
 class CmdViewTests(TestCase):
 
@@ -40,4 +41,4 @@ class CmdViewTests(TestCase):
         url = reverse('webcmd:cmd')
         response = self.client.post(url, data=data)
 
-        self.assert_contains(response, cmd_text)
+        self.assertIn(cmd_text, response)

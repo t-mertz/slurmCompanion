@@ -1,8 +1,10 @@
+{% extends "navigation.html" %}
+
 {% load static %}
 
 <link rel="stylesheet" type="text/css" href="{% static 'webcmd/style.css' %}" />
 
-
+{% block content %}
 <form action="/cmd/cmd" method="post">
     {% csrf_token %}
     
@@ -31,3 +33,5 @@
     {% csrf_token %}
     <input type="submit" value="Clear history" />
 </form>
+
+{% endblock %}

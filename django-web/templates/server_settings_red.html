@@ -1,0 +1,13 @@
+{% extends 'navigation.html' %}
+
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'settings.css' %}" />
+
+
+{% block content %}
+    {% if error_message %}
+        <div class="warning">{{ error_message }}</div>
+    {% endif %}
+
+    <a href={% url 'settingspage' %}>Add another server</a>
+{% endblock %}
