@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -128,3 +129,10 @@ STATICFILES_DIRS = [
 ]
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.file'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "asgiref.inmemory.ChannelLayer",
+        "ROUTING": "slurmui.routing.channel_routing",
+    },
+}

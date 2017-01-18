@@ -29,10 +29,11 @@ class ConnectionData(object):
     """
     Stores the connection data for an SSH session.
     """
-    def __init__(self, url, uname, pwd):
+    def __init__(self, url, uname, pwd, dir='~'):
         self._url = url
         self._uname = uname
         self._pwd = pwd
+        self._dir = dir
     
     def username(self):
         return self._uname
@@ -43,11 +44,14 @@ class ConnectionData(object):
     def password(self):
         return self._pwd
     
+    def dir(self):
+        return self._dir
+    
     def dict(self):
         """
-        Return a dictionary containing username and url.
+        Return a dictionary containing username, dir and url.
         """
-        return dict([['username', self._uname], ['url', self._url]])
+        return dict([['username', self._uname], ['url', self._url], ['dir', self._dir]])
 
 
 class ShhSession(object):
@@ -72,6 +76,7 @@ class ShhSession(object):
         """
         self._client.connect(cdata.url(), username=cdata.username(), password=cdata.password())
         self._username = cdata.username()
+        self._cwd = cdata.dir()
     
     def exec_command(self, cmd_string):
         """
@@ -80,7 +85,12 @@ class ShhSession(object):
         Return the stdout response.
         """
         # exec_command() returns a tuple (stdin, stdout, stderr)
-        return self._client.exec_command(cmd_string)[1]
+        stdin, stdout, stderr = self._client.exec_command(cmd_string)
+
+        stdout_txt = stdout.read().decode("utf-8")
+        stdout_txt += stderr.read().decode("utf-8")
+        
+        return stdout_txt
 
     def close(self):
         self._client.close()
@@ -93,6 +103,7 @@ class InteractiveShhSession(ShhSession):
     Contains all commands that can be executed in an interactive SSH session.
     The session itself is managed by the `_client` object and terminated automatically.
     """
+
     def squeue_usr(self):
         """
         Retrieve user's job list.
@@ -187,8 +198,11 @@ class InteractiveShhSession(ShhSession):
             # nothing to be done. working directory has not been changed
             pass
 
-        # exec_command() returns a tuple (stdin, stdout, stderr)
-        return self._client.exec_command(cmd_string)[1]
+        if self._cwd == '~':
+            return self._client.exec_command(cmd_string)
+        else:
+            cmd_queue = ManagedCWD.correct_cwd(self)
+            return self._client.exec_command(cmd_queue.combine())
 
 class Response(object):
     
@@ -252,6 +266,7 @@ class CommandQueue(object):
         
         self._cmd_list += args
     
+
     def clear(self):
         """
         Delete all commands from the CommandQueue.import
@@ -353,6 +368,20 @@ def run_mult_commands(cdata, command_list):
     out_string = run_command(cdata, cmd_queue.combine())
 
     return out_string
+
+
+def run_command_in_dir(cdata, cmd_string):
+    """
+
+    """
+    change_dir = check_cd(cmd_string)
+
+    # cd command detected, return new directory
+    if change_dir is not None:
+        return '', change_dir
+    
+    return run_command(cdata, cmd_string), cdata
+
 
 def execute_in_session(session, cmd_string):
     """
@@ -495,6 +524,8 @@ def splitpath(path):
 def splitpath_r(path):
     """
     Recursive implementation of splitpath().
+
+    ! UNSTABLE !
     """
     head, tail = os.path.split(path)
     if head == '':

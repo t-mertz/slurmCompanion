@@ -2,19 +2,21 @@
 
 {% load static %}
 
-<link rel="stylesheet" type="text/css" href={% static 'webcmd/style.css' %} />
-<script type="text/javascript" src={% static 'webcmd/cmdscript.js' %}> </script>
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{% static 'webcmd/css/style.css' %}" />
+{% endblock %}
+
+{% block scripts %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script type="text/javascript" src="{% static 'webcmd/js/cmdscript.js' %}"></script>
+{% endblock %}
+
 
 {% block content %}
-<form action="/cmd/cmd" method="post">
+<h4>Active Shell</h4>
+<!--<form action="/cmd/cmd" method="post">
     {% csrf_token %}
     
-    <!--
-    <p class="command">{{ cmd }}</p>
-    <p class="response">{{ response }}</p>
-    <br />
-    -->
-    <h4>Active Shell</h4>
     <div class="commandline">
         {% for c in cmd_res_list %}
             {% for cl in c.0 %}
@@ -26,8 +28,13 @@
         {% endfor %}
     </div>
     {{ form }}
-    <input type="submit" value="Submit" />
-</form>
+    
+</form>-->
+<div id="cmdWindow">
+        
+</div>
+<input type="text" id="command_input" />
+<input type="button" onclick="submit()" value="Submit" />
 
 
 <form action="/cmd/clear" method="post">

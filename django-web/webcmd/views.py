@@ -111,7 +111,8 @@ def cmd(request):
     
 
     #return HttpResponse("cmd")
-    return render(request, 'webcmd/cmd.html', context=context)
+    #return render(request, 'webcmd/cmd.html', context=context)
+    return render(request, 'webcmd/cmd_ws.html', context=context)
 
 def get_paragraph_string(string):
     out = "<p>"
