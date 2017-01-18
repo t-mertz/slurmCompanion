@@ -23,11 +23,11 @@ socket.onmessage = function(e) {
     var msg = JSON.parse(e.data);
     var error = false;
 
-    if ("command_string" in msg) {
-        var lines = msg.command_string;
+    if ("command_list" in msg) {
+        var lines = msg.command_list;
     }
-    else if ("response_string" in msg) {
-        var lines = msg.response_string;
+    else if ("response_list" in msg) {
+        var lines = msg.response_list;
     }
     else {
         error = true;
