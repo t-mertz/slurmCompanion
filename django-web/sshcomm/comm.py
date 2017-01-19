@@ -54,7 +54,7 @@ class ConnectionData(object):
         return dict([['username', self._uname], ['url', self._url], ['dir', self._dir]])
 
 
-class ShhSession(object):
+class SshSession(object):
     """
     Session base class.
     """
@@ -98,7 +98,7 @@ class ShhSession(object):
     def __del__(self):
         self.close()
 
-class InteractiveShhSession(ShhSession):
+class InteractiveShhSession(SshSession):
     """
     Contains all commands that can be executed in an interactive SSH session.
     The session itself is managed by the `_client` object and terminated automatically.
@@ -209,7 +209,39 @@ class Response(object):
     def __init__(self, cmd, res):
         self._cmd = cmd
         self._res = res
+
+class TestResult(object):
+
+    def __init__(self, test_success, test_message):
+        self._success = test_success
+        self._info = test_message
     
+    def get_success(self):
+        return self._success
+    
+    def get_info(self):
+        return self._info
+
+
+def test_connection_data(cdata):
+    """
+    Tests the connection data provided.
+
+    Returns:
+    * result (TestResult)
+    """
+    ssh_session = SshSession()
+
+    try:
+        ssh_session.connect(cdata)
+    except (paramiko.SSHException, TimeoutError):
+        return TestResult(False, "Server could not be reached")
+    except paramiko.AuthenticationException:
+        return TestResult(False, "User data could not be authenticated")
+    except paramiko.BadHostKeyException:
+        return TestResult(False, "Host key could not be verified")
+    else:
+        return TestResult(True, "Connection data verified")
 
 
 class CommandQueue(object):

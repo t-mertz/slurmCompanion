@@ -1,13 +1,20 @@
 {% extends 'navigation.html' %}
 
+{% block head %}
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'settings.css' %}" />
+{% endblock %}
 
 
 {% block content %}
     {% if error_message %}
         <div class="warning">{{ error_message }}</div>
+    {% elif test_status %}
+        <div class="notification">{{ test_msg }} <br /> Saved connection data: {{ profile }} for {{ server_name }} at {{ url }}.</div>
+    {% else %}
+        <div class="warning">Connection test failed! {{ test_msg }}</div>
     {% endif %}
+    
 
     <a href={% url 'settingspage' %}>Add another server</a>
 {% endblock %}

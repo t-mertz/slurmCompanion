@@ -1,15 +1,22 @@
+#cmdWindow {
+    background-color: black;
+}
+
+@media(min-width:977) {
+#cmdWindow {
+    height: 20em;
+    width: 50em;
+}
+}
+
 #cmdWindow p {
     font-family: Courier;
+    color: white;
+    margin-top: 0em;
+    margin-bottom: 0em;
+    margin-left: 2px;
 }
 
-div.command, div.response {
-    font-family: Courier;
-}
-
-.command {
-    font-family: Courier;
-}
-
-.response {
+#cmdPrompt {
     font-family: Courier;
 }
