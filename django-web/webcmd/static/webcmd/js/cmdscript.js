@@ -1,3 +1,4 @@
+var cmd_prompt_text;
 
 /** Add a paragraph to the command window and insert the message.
  */
@@ -10,6 +11,26 @@ add_paragraph = function(msg) {
     document.getElementById("cmdWindow").appendChild(newpar);
 }
 
+/**Set the command prompt text.
+ * This is called when a response is returned.
+ */
+set_cmd_prompt = function(text) {
+    $('#cmdPrompt')[0].innerHTML = text;
+}
+
+/**Disable submit button.
+ * This is called when a command is submitted to block interfering commands.
+ */
+disable_submit = function() {
+    var btn = $('#submit_cmd')[0].disabled = true;
+}
+
+/**Enable submit button.
+ * This is called when a response is returned.
+ */
+enable_submit = function() {
+    var btn = $('#submit_cmd')[0].disabled = false;
+}
 
 // Note that the path doesn't matter for routing; any WebSocket
 // connection gets bumped over to WebSocket consumers
@@ -25,9 +46,14 @@ socket.onmessage = function(e) {
 
     if ("command_list" in msg) {
         var lines = msg.command_list;
+        cmd_prompt_text = lines[0].split('$')[0] + '$';
     }
     else if ("response_list" in msg) {
         var lines = msg.response_list;
+
+        // update HTML controls
+        set_cmd_prompt(cmd_prompt_text);
+        enable_submit();
     }
     else {
         error = true;
@@ -61,6 +87,7 @@ submit = function() {
     var input = document.getElementById('command_input').value;
     socket.send(JSON.stringify({
         "command_string": input}));
+    disable_submit();
 }
 
 

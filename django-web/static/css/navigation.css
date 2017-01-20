@@ -37,6 +37,13 @@ body {
     height: 100%;
 }
 
+.nav > ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 200px;
+    background-color: #e3e3e3;
+}
 
 @media(min-width:977px) {
     .nav {
@@ -86,6 +93,15 @@ body {
         color: #a80000;
         background-color: #ffcccc;
         border: 1px solid #bd0000;
+        border-radius: 5px;
+        padding: 10px;
+        margin: 10px 20px;
+    }
+
+    .notification {
+        color: #0000a8;
+        background-color: #ccccff;
+        border: 1px solid #0000bd;
         border-radius: 5px;
         padding: 10px;
         margin: 10px 20px;

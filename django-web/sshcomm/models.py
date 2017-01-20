@@ -15,7 +15,7 @@ class RemoteServer(models.Model):
 class UserData(models.Model):
     owner = models.ForeignKey(User)
     #user_id = models.IntegerField()
-    profile_name = models.CharField(max_length=20)
+    profile = models.CharField(max_length=20)
     server = models.ForeignKey(RemoteServer)
-    user_name = models.CharField(max_length=20)
-    user_password = models.CharField(widgets.PasswordInput, max_length=40)
+    user_name = models.CharField(max_length=128)
+    user_password = models.CharField(widgets.PasswordInput, max_length=128)

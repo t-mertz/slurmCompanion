@@ -21,7 +21,7 @@ from . import views
 urlpatterns = [
     url(r'^$', views.sitehome, name="siteindex"),
     url(r'^info/', include('infopage.urls')),
-    url(r'^settings/', views.settingspage, name="settingspage"),
+    url(r'^settings/$', views.settingspage, name="settingspage"),
     url(r'^settings/addserver/', views.serversettings_addserver, name="settings_addserver"),
     url(r'^cmd/', include('webcmd.urls')),
     url(r'^support/', include('support.urls')),
