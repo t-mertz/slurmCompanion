@@ -11,14 +11,42 @@
 
 <body>
 <header class="page-header">
-    SLURM Companion Utilities
+    <div class="banner">SLURM Companion Utilities</div>
+
+    <div class="login-mask">
+    {% if form %}
+        <div class="login-form">
+            Login:
+            <form action={% url 'siteindex' %} method="post">
+                {% csrf_token %}
+
+                {{ form }}
+                <input type="submit" value="Login"/>
+            </form>
+        </div>
+    {% elif not login_failed %}
+        <div class="login-msg">Logged in as <span class="username">{{ username }}</span>.</div>
+        <form action="" method="get">
+            <input type="hidden" name="logout" />
+            <input type="submit" value="Logout" class=".logout-btn" />
+        </form>
+    {% endif %}
+
+    {% if login_failed %}
+        <div class="warning">Login failed!</div>
+    {% endif %}
+    </div>
 </header>
 
-<div class="nav">
+<nav class="nav">
     <ul>
         <li>
             <a href={% url 'infopageindex' %}>Info</a>
         </li>
+        <li>
+            <a href="">About</a>
+        </li>
+        {% if logged_in %}
         <li>
             <a href={% url 'settingspage' %}>My Account</a>
         </li>
@@ -37,8 +65,9 @@
         <li>
             <a href={% url 'supportindex' %}>Support</a>
         </li>
+        {% endif %}
     </ul>
-</div>
+</nav>
 
 <div class="content">
     {% block content %}
@@ -47,7 +76,7 @@
 
 <footer class="page-footer">
     <div class="footer-text">
-        Copyright 2016 Thomas Mertz
+        Copyright 2016-2017 Thomas Mertz
     </div>
 </footer>
 </body>

@@ -7,10 +7,20 @@ from sshcomm import security, comm
 
 
 
+def get_default_context(request):
+    logged_in = request.user.is_authenticated
+    
+    username = request.user.username if logged_in else None
+
+    return {'logged_in': logged_in,
+            'username': username
+            }
+
 def sitehome(request):
 
     if request.method == 'GET':
-        if logout in request.GET:
+        print(request.GET)
+        if 'logout' in request.GET:
             logout(request)
         context = {'form' : LoginForm() }
 
@@ -38,12 +48,17 @@ def sitehome(request):
                 #request.session['hashkey'] = hashkey
 
 
-                context.update({ 'login_failed' : False,
-                                 'username' : uname 
-                                 })
+                context.update({'login_failed' : False,
+                                #'username' : uname,
+                                #'logged_in': request.user.is_authenticated,
+                                })
                 
             else:
-                context.update({ 'login_failed' : True })
+                context.update({'login_failed' : True,
+                                #'logged_in': request.user.is_authenticated,
+                                })
+            
+            context.update(get_default_context(request))
 
 
     return render(request, 'sitehome.html', context=context)
