@@ -136,3 +136,5 @@ CHANNEL_LAYERS = {
         "ROUTING": "slurmui.routing.channel_routing",
     },
 }
+
+LOGIN_URL = 'login'

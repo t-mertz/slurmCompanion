@@ -2,24 +2,36 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .forms import LoginForm, AddSshServerForm
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from sshcomm.models import UserData, RemoteServer
 from sshcomm import security, comm
 
 
-
 def get_default_context(request):
     logged_in = request.user.is_authenticated
+
+    login_form = LoginForm() if not logged_in else None
     
     username = request.user.username if logged_in else None
 
     return {'logged_in': logged_in,
-            'username': username
+            'username': username,
+            'form': login_form,
             }
+
+def login_view(request):
+
+    context = get_default_context(request)
+
+    context.update({'login_disabled': True, })
+
+    return render(request, 'login.html', context)
+
 
 def sitehome(request):
 
     if request.method == 'GET':
-        print(request.GET)
+        #print(request.GET)
         if 'logout' in request.GET:
             logout(request)
         context = {'form' : LoginForm() }
@@ -64,6 +76,7 @@ def sitehome(request):
     return render(request, 'sitehome.html', context=context)
 
 
+@login_required
 def settingspage(request):
 
     context = {
@@ -71,6 +84,7 @@ def settingspage(request):
     }
     return render(request, 'settings.html', context=context)
 
+@login_required
 def serversettings_addserver(request):
 
     # initialize context

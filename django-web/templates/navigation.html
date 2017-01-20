@@ -2,10 +2,13 @@
 <html>
 {% load static %}
 <head>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/companion.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/navigation.css' %}" />
     {% block styles %}
     {% endblock %}
     {% block scripts %}
+    {% endblock %}
+    {% block title %}
     {% endblock %}
 </head>
 
@@ -13,29 +16,31 @@
 <header class="page-header">
     <div class="banner">SLURM Companion Utilities</div>
 
-    <div class="login-mask">
-    {% if form %}
-        <div class="login-form">
-            Login:
-            <form action={% url 'siteindex' %} method="post">
-                {% csrf_token %}
+    {% if not login_disabled %}
+        <div class="login-mask">
+        {% if not logged_in %}
+            <div class="login-form">
+                Login:
+                <form action={% url 'siteindex' %} method="post">
+                    {% csrf_token %}
 
-                {{ form }}
-                <input type="submit" value="Login"/>
+                    {{ form }}
+                    <button class="button" type="submit" value="Login">Login</button>
+                </form>
+            </div>
+        {% elif logged_in and not login_failed %}
+            <div class="login-msg">Logged in as <span class="username">{{ username }}</span>.</div>
+            <form action="" method="get">
+                <input type="hidden" name="logout" />
+                <button class="button logout-btn" type="submit" value="Logout" />
             </form>
-        </div>
-    {% elif not login_failed %}
-        <div class="login-msg">Logged in as <span class="username">{{ username }}</span>.</div>
-        <form action="" method="get">
-            <input type="hidden" name="logout" />
-            <input type="submit" value="Logout" class=".logout-btn" />
-        </form>
-    {% endif %}
+        {% endif %}
 
-    {% if login_failed %}
-        <div class="warning">Login failed!</div>
+        {% if login_failed %}
+            <div class="dropout warning">Login failed!</div>
+        {% endif %}
+        </div>
     {% endif %}
-    </div>
 </header>
 
 <nav class="nav">

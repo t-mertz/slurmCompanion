@@ -26,4 +26,5 @@ urlpatterns = [
     url(r'^cmd/', include('webcmd.urls')),
     url(r'^support/', include('support.urls')),
     url(r'^admin/', admin.site.urls),
+    url(r'^login/', views.login_view, name='login')
 ]

@@ -31,7 +31,7 @@ def clear_cmd(request):
     
     return render(request, 'webcmd/cmd.html', context=context)
 
-#@login_required
+@login_required
 def cmd(request):
 
     request.session.set_expiry(0)
