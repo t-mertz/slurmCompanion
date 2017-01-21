@@ -1,5 +1,5 @@
 import hashlib # sha512
-from simplecrypt import encrypt, decrypt
+#from simplecrypt import encrypt, decrypt
 from Crypto.Cipher import AES
 from Crypto import Random
 import sshcomm.pybytes2str as pybytes2str # encode, decode
@@ -124,6 +124,7 @@ def decrypt_Crypto(message, key):
     return msg
 
 
+'''
 def encrypt(message, key):
     """
     Wrapper for simplecrypt.encrypt
@@ -141,4 +142,4 @@ def decrypt(message, key):
     """
     return decrypt(key, message)
 
-
+'''
