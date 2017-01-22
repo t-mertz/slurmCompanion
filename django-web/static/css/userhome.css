@@ -1,8 +1,16 @@
 
+
 @media(min-width:977) {
+.content-container {
+    padding: 30px;
+}
+
 .box {
-    width: 30%;
-    margin: auto, auto;
+    display: inline-block;
+    width: 20%;
+    height: 200px;
+    margin-right: 5%;
+    margin-bottom: 5%;
     text-align: center;
     border: 1px, solid, black;
 }

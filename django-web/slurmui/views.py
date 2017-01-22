@@ -28,7 +28,7 @@ def login_view(request):
     return render(request, 'login.html', context)
 
 @login_required
-def user_home(request):
+def user_home(request, user_id=None):
 
     context = get_default_context(request)
 
