@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from .forms import LoginForm, AddSshServerForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -19,11 +19,58 @@ def get_default_context(request):
             'form': login_form,
             }
 
+def perform_logout(request):
+    context = {}
+    if request.method == 'GET':
+        #print(request.GET)
+        if 'logout' in request.GET:
+            logout(request)
+        context = {'login_form' : LoginForm() }
+
+        #if request.user.is_authenticated:
+        #    context = {'username' : request.user.username}
+    
+    return request, context
+
 def login_view(request):
 
     context = get_default_context(request)
 
     context.update({'login_disabled': True, })
+
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+
+        if form.is_valid():
+            uname = form.cleaned_data['input_name']
+            pword = form.cleaned_data['input_password']
+
+            user = authenticate(username=uname, password=pword)
+
+            if user is not None:
+                login(request, user)
+
+                # get hashkey and save in session
+                hashkey = security.create_key(uname, pword)
+                
+                # store the stringified hashkey in session
+                request.session['hashkey'] = security.encode_key(hashkey)
+
+
+                context.update({'login_failed' : False,
+                                #'username' : uname,
+                                #'logged_in': request.user.is_authenticated,
+                                })
+
+                HttpResponseRedirect('userhome')
+                
+            else:
+                context.update({'login_failed' : True,
+                                #'logged_in': request.user.is_authenticated,
+                                })
+            
+            context.update(get_default_context(request))
+
 
     return render(request, 'login.html', context)
 
@@ -40,10 +87,10 @@ def sitehome(request):
         #print(request.GET)
         if 'logout' in request.GET:
             logout(request)
-        context = {'form' : LoginForm() }
+        context = {'login_form' : LoginForm() }
 
-        if request.user.is_authenticated:
-            context = {'username' : request.user.username}
+        #if request.user.is_authenticated:
+        #    context = {'username' : request.user.username}
     
     else:
         context = {}
@@ -74,6 +121,7 @@ def sitehome(request):
             else:
                 context.update({'login_failed' : True,
                                 #'logged_in': request.user.is_authenticated,
+                                'login_form': form,
                                 })
             
             context.update(get_default_context(request))

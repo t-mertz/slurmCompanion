@@ -89,16 +89,15 @@ body {
     }
 
     .login-msg {
-        float: right;
-        display: block;
-        width: 100%;
+        display: inline-block;
     }
 
+/*
     .logout-btn {
-        background: none;
         border: none;
         background-color: red;
     }
+*/
 
     .warning {
         color: #a80000;

@@ -21,10 +21,10 @@
         {% if not logged_in %}
             <div class="login-form">
                 Login:
-                <form action={% url 'siteindex' %} method="post">
+                <form action={% url 'login' %} method="post">
                     {% csrf_token %}
 
-                    {{ form }}
+                    {{ login_form }}
                     <button class="button" type="submit" value="Login">Login</button>
                 </form>
             </div>
@@ -32,7 +32,7 @@
             <div class="login-msg">Logged in as <span class="username">{{ username }}</span>.</div>
             <form action="" method="get">
                 <input type="hidden" name="logout" />
-                <button class="button logout-btn" type="submit" value="Logout" />
+                <button class="button" type="submit" value="Logout">Logout</button>
             </form>
         {% endif %}
 
