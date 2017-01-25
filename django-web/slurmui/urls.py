@@ -20,8 +20,8 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.sitehome, name="siteindex"),
-    url(r'^user/$', views.login_view),
-    url(r'^user/(?P<user_id>[0-9]+)', views.user_home, 'userhome'),
+    url(r'^user/$', views.user_home, name='userhome'),
+    url(r'^user/(?P<user_id>[0-9]+)', views.user_home),
     url(r'^info/', include('infopage.urls')),
     url(r'^settings/$', views.settingspage, name="settingspage"),
     url(r'^settings/addserver/', views.serversettings_addserver, name="settings_addserver"),

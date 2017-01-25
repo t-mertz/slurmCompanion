@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 from .forms import LoginForm, AddSshServerForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -25,7 +26,8 @@ def perform_logout(request):
         #print(request.GET)
         if 'logout' in request.GET:
             logout(request)
-        context = {'login_form' : LoginForm() }
+        context = {'login_form' : LoginForm(),
+                    'logged_in': False }
 
         #if request.user.is_authenticated:
         #    context = {'username' : request.user.username}
@@ -34,9 +36,15 @@ def perform_logout(request):
 
 def login_view(request):
 
-    context = get_default_context(request)
+    context = {}
 
-    context.update({'login_disabled': True, })
+    if request.method == 'GET':
+        request, context = perform_logout(request)
+
+    context.update(get_default_context(request))
+
+    login_disabled = not context['logged_in']
+    context.update({'login_disabled': login_disabled, })
 
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -62,7 +70,7 @@ def login_view(request):
                                 #'logged_in': request.user.is_authenticated,
                                 })
 
-                HttpResponseRedirect('userhome')
+                return HttpResponseRedirect(reverse('userhome'))
                 
             else:
                 context.update({'login_failed' : True,
@@ -132,10 +140,21 @@ def sitehome(request):
 
 @login_required
 def settingspage(request):
+    
+    context = {}
 
-    context = {
+    if request.method == 'GET':
+        request, context = perform_logout(request)
+
+    context.update(get_default_context(request))
+    
+    if not context['logged_in']:
+        return HttpResponseRedirect(reverse('siteindex'))
+
+
+    context.update({
         'add_server_form': AddSshServerForm(),
-    }
+    })
     return render(request, 'settings.html', context=context)
 
 @login_required
