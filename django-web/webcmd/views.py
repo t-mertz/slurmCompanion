@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 
 from .forms import CmdForm
 from .cmdtext import CmdText, Command, Response
+from slurmui.views import get_default_context, perform_logout
 
 # Create your views here.
 
@@ -31,9 +32,21 @@ def clear_cmd(request):
     
     return render(request, 'webcmd/cmd.html', context=context)
 
-#@login_required
+@login_required
 def cmd(request):
+    
+    # determine login status to handle the login/logout forms
+    context = {}
 
+    if request.method == 'GET':
+        request, context = perform_logout(request)
+
+    context.update(get_default_context(request))
+
+    login_disabled = not context['logged_in']
+    context.update({'login_disabled': login_disabled, })
+    ##
+    
     request.session.set_expiry(0)
 
     if request.method == 'GET':
@@ -45,9 +58,9 @@ def cmd(request):
                 pass
             request.session.flush()
             cmd_res_list = [[], []]
-            context = {'cmd_res_list': request.session['command_list']}#cmd_res_list}
+            context.update({'cmd_res_list': request.session['command_list']})#cmd_res_list}
         else:
-            context = {'cmd_res_list': [[], []]}
+            context.update({'cmd_res_list': [[], []]})
         
         form = CmdForm()
 
@@ -92,20 +105,21 @@ def cmd(request):
             #    out_string += c + "\n"
 
             #form.cleaned_data['output_field'] = "response"
-            context = {'cmd': request.session['command_list'],
+            context.update({'cmd': request.session['command_list'],
                        'response': response_string,
                        'command_list': request.session['command_list'],
                        'response_list': request.session['response_list'],
                        'cmd_res_list': cmd_res_list
-                      }
+                      })
             
         else:
-            context = {}
+            #context = {}
+            pass
         #return HttpResponseRedirect('/cmd/cmd')
     
     else:
         form = CmdForm()
-        context = {}
+        #context = {}
     
     context.update({'form': form})
     

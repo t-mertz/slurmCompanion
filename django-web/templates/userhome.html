@@ -1,0 +1,31 @@
+{% extends 'navigation.html' %}
+
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/userhome.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class='content-container'>
+    <div class='box user-option'>
+        News
+    </div>
+    <div class='box user-option'>
+        Shell
+    </div>
+    <div class='box user-option'>
+        Options
+    </div>
+    <div class='box user-option'>
+        Support
+    </div>
+    <div class='box user-option'>
+        Messages
+    </div>
+</div>
+<div class='content-container'>
+    <h4>Account Overview</h4>
+    
+</div>
+{% endblock %}

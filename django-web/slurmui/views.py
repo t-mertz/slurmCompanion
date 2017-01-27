@@ -1,21 +1,104 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 from .forms import LoginForm, AddSshServerForm
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from sshcomm.models import UserData, RemoteServer
 from sshcomm import security, comm
 
 
+def get_default_context(request):
+    logged_in = request.user.is_authenticated
+
+    login_form = LoginForm() if not logged_in else None
+    
+    username = request.user.username if logged_in else None
+
+    return {'logged_in': logged_in,
+            'username': username,
+            'form': login_form,
+            }
+
+def perform_logout(request):
+    context = {}
+    if request.method == 'GET':
+        #print(request.GET)
+        if 'logout' in request.GET:
+            logout(request)
+        context = {'login_form' : LoginForm(),
+                    'logged_in': False }
+
+        #if request.user.is_authenticated:
+        #    context = {'username' : request.user.username}
+    
+    return request, context
+
+def login_view(request):
+
+    context = {}
+
+    if request.method == 'GET':
+        request, context = perform_logout(request)
+
+    context.update(get_default_context(request))
+
+    login_disabled = not context['logged_in']
+    context.update({'login_disabled': login_disabled, })
+
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+
+        if form.is_valid():
+            uname = form.cleaned_data['input_name']
+            pword = form.cleaned_data['input_password']
+
+            user = authenticate(username=uname, password=pword)
+
+            if user is not None:
+                login(request, user)
+
+                # get hashkey and save in session
+                hashkey = security.create_key(uname, pword)
+                
+                # store the stringified hashkey in session
+                request.session['hashkey'] = security.encode_key(hashkey)
+
+
+                context.update({'login_failed' : False,
+                                #'username' : uname,
+                                #'logged_in': request.user.is_authenticated,
+                                })
+
+                return HttpResponseRedirect(reverse('userhome'))
+                
+            else:
+                context.update({'login_failed' : True,
+                                #'logged_in': request.user.is_authenticated,
+                                })
+            
+            context.update(get_default_context(request))
+
+
+    return render(request, 'login.html', context)
+
+@login_required
+def user_home(request, user_id=None):
+
+    context = get_default_context(request)
+
+    return render(request, 'userhome.html', context)
 
 def sitehome(request):
 
     if request.method == 'GET':
-        if logout in request.GET:
+        #print(request.GET)
+        if 'logout' in request.GET:
             logout(request)
-        context = {'form' : LoginForm() }
+        context = {'login_form' : LoginForm() }
 
-        if request.user.is_authenticated:
-            context = {'username' : request.user.username}
+        #if request.user.is_authenticated:
+        #    context = {'username' : request.user.username}
     
     else:
         context = {}
@@ -38,24 +121,43 @@ def sitehome(request):
                 #request.session['hashkey'] = hashkey
 
 
-                context.update({ 'login_failed' : False,
-                                 'username' : uname 
-                                 })
+                context.update({'login_failed' : False,
+                                #'username' : uname,
+                                #'logged_in': request.user.is_authenticated,
+                                })
                 
             else:
-                context.update({ 'login_failed' : True })
+                context.update({'login_failed' : True,
+                                #'logged_in': request.user.is_authenticated,
+                                'login_form': form,
+                                })
+            
+            context.update(get_default_context(request))
 
 
     return render(request, 'sitehome.html', context=context)
 
 
+@login_required
 def settingspage(request):
+    
+    context = {}
 
-    context = {
+    if request.method == 'GET':
+        request, context = perform_logout(request)
+
+    context.update(get_default_context(request))
+    
+    if not context['logged_in']:
+        return HttpResponseRedirect(reverse('siteindex'))
+
+
+    context.update({
         'add_server_form': AddSshServerForm(),
-    }
+    })
     return render(request, 'settings.html', context=context)
 
+@login_required
 def serversettings_addserver(request):
 
     # initialize context

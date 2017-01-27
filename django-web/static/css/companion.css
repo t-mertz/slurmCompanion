@@ -1,0 +1,26 @@
+.button {
+    background-color: #ddf;
+    border: none;
+    color: black;
+    text-align: center;
+    width: 100px;
+}
+
+@media(min-width:977px) {
+.button {
+    display: inline-block;
+    background-color: #ddf;
+    border: none;
+    color: black;
+    text-align: center;
+    text-decoration: none;
+    padding: 15px, 30px;
+    cursor: pointer;
+    transition-duration: 0.4s;
+    margin: 4px, 2px;
+}
+
+.button:hover {
+    background-color: #fff;
+}
+}

@@ -1,0 +1,26 @@
+
+
+@media(min-width:977) {
+.content-container {
+    padding: 30px;
+}
+
+.box {
+    display: inline-block;
+    width: 20%;
+    height: 200px;
+    margin-right: 5%;
+    margin-bottom: 5%;
+    text-align: center;
+    border: 1px, solid, black;
+}
+
+.user-option {
+    background-color: lightgrey;
+}
+
+.user-option:hover {
+    background-color: white;
+    border-color: grey;
+}
+}
