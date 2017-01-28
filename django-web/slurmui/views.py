@@ -173,8 +173,15 @@ def serversettings_addserver(request):
 
     if (request.method == "POST"):
         form = AddSshServerForm(request.POST)
+        
+        form_validated = form.is_valid()
 
-        if form.is_valid():
+        if not form_validated and (len(form.errors.as_data()) == 1 and 'input_password' in form.errors.as_data()):
+            # override password validation
+            form.cleaned_data['input_password'] = request.POST['input_password']
+            form_validated = True
+
+        if form_validated:
             # get input
             server_name = form.cleaned_data['select_name']
             #url = form.cleaned_data['input_url']
