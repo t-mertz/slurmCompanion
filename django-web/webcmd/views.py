@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import CmdForm
 from .cmdtext import CmdText, Command, Response
 from slurmui.views import get_default_context, perform_logout
+from sshcomm.models import UserData
 
 # Create your views here.
 
@@ -33,7 +34,7 @@ def clear_cmd(request):
     return render(request, 'webcmd/cmd.html', context=context)
 
 @login_required
-def cmd(request):
+def cmd(request, server_name=None):
     
     # determine login status to handle the login/logout forms
     context = {}
@@ -134,3 +135,25 @@ def get_paragraph_string(string):
     out += "</p>"
 
     return out
+
+def cmd_selection(request, context=None):
+    """
+    Offers all the user's profile for selection.
+    """
+    # determine login status to handle the login/logout forms
+    context = {}
+
+    if request.method == 'GET':
+        request, context = perform_logout(request)
+
+    context.update(get_default_context(request))
+
+    login_disabled = not context['logged_in']
+    context.update({'login_disabled': login_disabled, })
+    ##
+
+    server_list = UserData.objects.filter(owner=request.user)
+
+    context.update({'server_list', server_list})
+
+    return render(request, 'cmd_select.html', context=context)
