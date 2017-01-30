@@ -1,6 +1,7 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
 
 from .forms import CmdForm
 from .cmdtext import CmdText, Command, Response
@@ -151,9 +152,11 @@ def cmd_selection(request, context=None):
     login_disabled = not context['logged_in']
     context.update({'login_disabled': login_disabled, })
     ##
+    if login_disabled:
+        return HttpResponseRedirect(reverse('siteindex'))
 
     server_list = UserData.objects.filter(owner=request.user)
 
-    context.update({'server_list', server_list})
+    context.update({'server_list': server_list})
 
-    return render(request, 'cmd_select.html', context=context)
+    return render(request, 'webcmd/cmd_select.html', context=context)

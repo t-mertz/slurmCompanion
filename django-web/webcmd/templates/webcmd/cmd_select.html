@@ -3,7 +3,7 @@
 {% block content %}
 
 {% for server in server_list %}
-    <a href={% url 'cmd' %}><p>{{server.profile}}, {{server.server.server_url}}</p></a>
+    <a href={% url 'webcmd:cmd' %}><p>{{server.profile}}, {{server.server.server_url}}</p></a>
 {% endfor %}
 
 {% endblock %}
