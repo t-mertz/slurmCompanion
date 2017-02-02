@@ -7,6 +7,7 @@ from .forms import CmdForm
 from .cmdtext import CmdText, Command, Response
 from slurmui.views import get_default_context, perform_logout
 from sshcomm.models import UserData
+from sshcomm.security import decrypt_Crypto
 
 # Create your views here.
 
@@ -78,10 +79,22 @@ def cmd(request, server_name=None):
             request.session['command_list'].append(cur_cmd[:])
             cur_cind = len(request.session['command_list'])
 
-            # This is just experimental and will be replaced
+            # retrieve server data
+            try:
+                profile = UserData.objects.get(user=request.user, profile=server_name)
+            except:
+                raise
+            
             try:
                 import sshcomm.comm as comm
+                # This is just experimental and will be replaced
                 cdata = comm.ConnectionData("192.168.178.112", "user", " ")
+                '''
+                cdata = comm.ConnectionData(profile.url, 
+                                            decrypt_Crypto(username, request.session.hashkey), 
+                                            decrypt_Crypto(password, request.session.hashkey)
+                                            )
+                '''
                 response_string = comm.run_command(cdata, cmd_string)
             except Exception as e:
                 response_string = "[backend failed: {}] response to ".format(e) + cmd_string

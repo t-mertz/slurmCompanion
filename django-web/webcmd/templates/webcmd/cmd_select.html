@@ -1,9 +1,19 @@
 {% extends 'navigation.html' %}
 
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{% static 'webcmd/css/style.css' %}" />
+{% endblock %}
+
 {% block content %}
 
+<h3>Select profile</h3>
+<table class="server_list">
+    <tr><th>Profile Name</th><th>URL</th><th>Availability/Status</th></tr>
 {% for server in server_list %}
-    <a href={% url 'webcmd:cmd' %}><p>{{server.profile}}, {{server.server.server_url}}</p></a>
+        <tr class="profile_row"><td><a href="{% url 'webcmd:server_cmd' server_name=server.profile %}">{{server.profile}}</a></td><td>{{server.server.server_url}}</td><td>[availability]</td></tr>
 {% endfor %}
+</table>
 
 {% endblock %}

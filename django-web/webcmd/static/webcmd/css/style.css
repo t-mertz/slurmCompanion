@@ -20,3 +20,21 @@
 #cmdPrompt {
     font-family: Courier;
 }
+
+.server_list {
+    margin: auto, auto;
+    width: 100%;
+    background-color: white;
+}
+
+.server_list tr {
+    padding: 1em;
+}
+
+.server_list tr.profile_row:hover {
+    background-color: #eeeeee;
+}
+
+.server_list td {
+    padding: 1em;
+}
