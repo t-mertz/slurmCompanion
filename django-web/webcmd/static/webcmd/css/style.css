@@ -38,3 +38,19 @@
 .server_list td {
     padding: 1em;
 }
+
+.status-ok-icon {
+    color: green;
+}
+
+.status-notok-icon {
+    color: red;
+}
+
+.status-notok-icon > img {
+    width: 2em;
+}
+
+.status-ok-icon > img {
+    width: 2em;
+}

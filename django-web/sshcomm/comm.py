@@ -424,7 +424,7 @@ def execute_in_session(session, cmd_string):
 
     return response
 
-def ping(url):
+def ping(url, timeout=1):
     """
     Ping a url and return boolean response.
     """
@@ -432,17 +432,18 @@ def ping(url):
     cmd_string = "ping"
 
     if SYSTEM == 'linux2':
-        option_string = "-c 1"
-        cmd = [cmd_string, option_string, url]
+        options = ['-c', '1']
+        cmd = [cmd_string, *options, url]
     elif SYSTEM == 'win32':
-        option_string = "-n 1"
-        cmd = [cmd_string, url, option_string]
+        options = ['-n', '1', '-w', '{}'.format(timeout)]
+        cmd = [cmd_string, *options, url]
     else:
         raise UnsupportedOSError(SYSTEM)
 
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     response_out, response_err = p.communicate()
+    response_out = response_out.decode('utf-8')
 
     p.terminate()
     p.kill()

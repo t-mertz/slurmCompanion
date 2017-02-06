@@ -10,9 +10,18 @@
 
 <h3>Select profile</h3>
 <table class="server_list">
-    <tr><th>Profile Name</th><th>URL</th><th>Availability/Status</th></tr>
+    <tr><th>Profile Name</th><th>URL</th><th>Availability/Status</th><th></th></tr>
 {% for server in server_list %}
-        <tr class="profile_row"><td><a href="{% url 'webcmd:server_cmd' server_name=server.profile %}">{{server.profile}}</a></td><td>{{server.server.server_url}}</td><td>[availability]</td></tr>
+        <tr class="profile_row"><td><a href="{% url 'webcmd:server_cmd' server_name=server.0.profile %}">{{server.0.profile}}</a></td><td>{{server.0.server.server_url}}</td>
+        <td>
+            {% if server.1 %}
+            <span class="status-ok-icon"><img src="{% static 'webcmd/img/status-green-icon.png' %}" alt="{{server.1}}" /></span>
+            {% else %}
+            <span class="status-notok-icon"><img src="{% static 'webcmd/img/status-red-icon.png' %}" alt="{{server.1}}" /></span>
+            {% endif %}
+        </td>
+        <td>Edit</td>
+        </tr>
 {% endfor %}
 </table>
 

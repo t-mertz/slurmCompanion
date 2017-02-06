@@ -8,6 +8,7 @@ from .cmdtext import CmdText, Command, Response
 from slurmui.views import get_default_context, perform_logout
 from sshcomm.models import UserData
 from sshcomm.security import decrypt_Crypto
+from sshcomm.comm import ping
 
 # Create your views here.
 
@@ -170,6 +171,11 @@ def cmd_selection(request, context=None):
 
     server_list = UserData.objects.filter(owner=request.user)
 
-    context.update({'server_list': server_list})
+    #context.update({'server_list': server_list})
+
+    server_status = []
+    for s in server_list:
+        server_status.append([s, ping(s.server.server_url)])
+    context.update({'server_list': server_status})
 
     return render(request, 'webcmd/cmd_select.html', context=context)
