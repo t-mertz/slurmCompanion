@@ -153,7 +153,7 @@ def get_paragraph_string(string):
 
 def cmd_selection(request, context=None):
     """
-    Offers all the user's profile for selection.
+    Offers all the user's profiles for selection.
     """
     # determine login status to handle the login/logout forms
     context = {}

@@ -9,11 +9,12 @@
 {% block content %}
 
 <h3>Select profile</h3>
+<div class="autooverflow">
 <table class="server_list">
-    <tr><th><input type="checkbox" />Select all</th><th>Profile Name</th><th>URL</th><th>Availability/Status</th><th></th></tr>
+    <tr><th class="select-all col-select"><input type="checkbox" />Select all</th><th>Profile Name</th><th>URL</th><th>Availability/Status</th><th></th><th></th></tr>
 {% for server in server_list %}
         <tr class="profile_row">
-            <td><input type="checkbox" /></td><td><a href="{% url 'webcmd:server_cmd' server_name=server.0.profile %}">{{server.0.profile}}</a></td><td>{{server.0.server.server_url}}</td>
+            <td class="col-select"><input type="checkbox" /></td><td>{{server.0.profile}}</td><td>{{server.0.server.server_url}}</td>
         <td>
             {% if server.1 %}
             <span class="status-ok-icon"><img src="{% static 'webcmd/img/status-green-icon.png' %}" alt="{{server.1}}" /></span>
@@ -22,8 +23,16 @@
             {% endif %}
         </td>
         <td>Edit</td>
+        <td><span class="delete-x"><img src="{% static 'webcmd/img/delete-x.png' %}" alt="Delete" /></span></td>
         </tr>
 {% endfor %}
 </table>
+</div>
 
+<form action="" method="GET">
+    <select>
+        <option value="delete">Delete</option>
+    </select>
+    <button type="submit">Go</button>
+</form>
 {% endblock %}
