@@ -42,3 +42,13 @@ class CmdViewTests(TestCase):
         response = self.client.post(url, data=data)
 
         self.assertIn(cmd_text, response)
+
+
+class TestServerSelection(TestCase):
+
+    def test_display_single_server(self):
+        # test that all servers are displayed
+        pass
+    
+    def test_display_two_servers(self):
+        pass
