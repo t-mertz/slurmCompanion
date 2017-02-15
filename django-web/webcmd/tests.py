@@ -1,8 +1,13 @@
 from django.test import TestCase
 from django.urls import reverse
+from django.contrib import auth
+from django.contrib.auth.models import User
+import datetime
+from django.contrib.auth.models import UserManager
 
 import webcmd.cmdtext as cmdtext
 from .forms import CmdForm
+from sshcomm.models import RemoteServer, UserData
 
 
 # Create your tests here.
@@ -47,8 +52,53 @@ class CmdViewTests(TestCase):
 class TestServerSelection(TestCase):
 
     def test_display_single_server(self):
-        # test that all servers are displayed
+        # test that a server is displayed
         pass
+        new_server = RemoteServer(server_url="", server_name="abc", date_added=datetime.date(2016,1,1))
+        new_server.save()
+
+        #user = User(username='user', password='password', email='')
+        #user.save()
+        user = User.objects.create_user(username='user', password='password')
+
+        logged_in = self.client.login(username='user', password='password')
+
+        self.assertTrue(logged_in)
+
+        userdata = UserData(owner=user, profile='profile1', server=new_server, user_name='uname', user_password='upw')
+        userdata.save()
+
+        url = reverse('webcmd:index')
+        response = self.client.get(url)
+
+        self.assertContains(response, 'profile1')
+
     
     def test_display_two_servers(self):
+        # test that two servers are displayed
         pass
+        new_server = RemoteServer(server_url="", server_name="abc", date_added=datetime.date(2016,1,1))
+        new_server.save()
+
+        #user = User(username='user', password='password', email='')
+        #user.save()
+        #user = self.client.create_user(username='user', password='password')
+        user = User.objects.create_user(username='user', password='password')
+
+        logged_in = self.client.login(username='user', password='password')
+
+        self.assertTrue(logged_in)
+        #user = auth.get_user(self.client)
+
+        userdata = UserData(owner=user, profile='profile1', server=new_server, user_name='uname', user_password='upw')
+        userdata.save()
+
+        userdata = UserData(owner=user, profile='profile2', server=new_server, user_name='uname', user_password='upw')
+        userdata.save()
+
+        url = reverse('webcmd:index')
+        #url = '/cmd/'
+        response = self.client.get(url)
+
+        self.assertContains(response, 'profile1')
+        self.assertContains(response, 'profile2')
