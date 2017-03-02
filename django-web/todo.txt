@@ -1,0 +1,10 @@
+test server -> websocket
+file manager pie chart
+support ticket creation
+cmd tabs
+show more details on admin page for UserData
+javascript animation for activity icon
+server availability
+last login
+
+search for users (similarity search, machine learning?)

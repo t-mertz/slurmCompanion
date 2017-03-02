@@ -1,10 +1,14 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
 
 from .forms import CmdForm
 from .cmdtext import CmdText, Command, Response
 from slurmui.views import get_default_context, perform_logout
+from sshcomm.models import UserData
+from sshcomm.security import decrypt_Crypto
+from sshcomm.comm import ping
 
 # Create your views here.
 
@@ -17,6 +21,11 @@ def index(request):
 
 def clear_cmd(request):
 
+    # determine login status to handle the login/logout forms
+    context = get_default_context(request)
+
+    login_disabled = not context['logged_in']
+    context.update({'login_disabled': login_disabled, })
     
     try:
         del request.session['command_list']
@@ -26,17 +35,19 @@ def clear_cmd(request):
     
 
     form = CmdForm()
-    context = {'cmd_res_list': [[], []],
+    context.update({'cmd_res_list': [[], []],
                'form': form
-              }
+              })
     
-    return render(request, 'webcmd/cmd.html', context=context)
+    #return render(request, 'webcmd/cmd.html', context=context)
+    return HttpResponseRedirect(reverse("cmd/cmd"))
 
 @login_required
-def cmd(request):
+def cmd(request, server_name=None, context=None):
     
-    # determine login status to handle the login/logout forms
-    context = {}
+    if context is None:
+        # determine login status to handle the login/logout forms
+        context = {}
 
     if request.method == 'GET':
         request, context = perform_logout(request)
@@ -45,6 +56,8 @@ def cmd(request):
 
     login_disabled = not context['logged_in']
     context.update({'login_disabled': login_disabled, })
+    if login_disabled:
+        return HttpResponseRedirect(reverse("siteindex"))
     ##
     
     request.session.set_expiry(0)
@@ -76,10 +89,22 @@ def cmd(request):
             request.session['command_list'].append(cur_cmd[:])
             cur_cind = len(request.session['command_list'])
 
-            # This is just experimental and will be replaced
+            # retrieve server data
+            try:
+                profile = UserData.objects.get(user=request.user, profile=server_name)
+            except:
+                raise
+            
             try:
                 import sshcomm.comm as comm
+                # This is just experimental and will be replaced
                 cdata = comm.ConnectionData("192.168.178.112", "user", " ")
+                '''
+                cdata = comm.ConnectionData(profile.url, 
+                                            decrypt_Crypto(username, request.session.hashkey), 
+                                            decrypt_Crypto(password, request.session.hashkey)
+                                            )
+                '''
                 response_string = comm.run_command(cdata, cmd_string)
             except Exception as e:
                 response_string = "[backend failed: {}] response to ".format(e) + cmd_string
@@ -134,3 +159,32 @@ def get_paragraph_string(string):
     out += "</p>"
 
     return out
+
+def cmd_selection(request, context=None):
+    """
+    Offers all the user's profiles for selection.
+    """
+    # determine login status to handle the login/logout forms
+    context = {}
+
+    if request.method == 'GET':
+        request, context = perform_logout(request)
+
+    context.update(get_default_context(request))
+
+    login_disabled = not context['logged_in']
+    context.update({'login_disabled': login_disabled, })
+    ##
+    if login_disabled:
+        return HttpResponseRedirect(reverse('siteindex'))
+
+    server_list = UserData.objects.filter(owner=request.user)
+
+    #context.update({'server_list': server_list})
+
+    server_status = []
+    for s in server_list:
+        server_status.append([s, ping(s.server.server_url)])
+    context.update({'server_list': server_status})
+
+    return render(request, 'webcmd/cmd_select.html', context=context)

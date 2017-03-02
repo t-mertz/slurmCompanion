@@ -20,3 +20,54 @@
 #cmdPrompt {
     font-family: Courier;
 }
+
+table.server_list {
+    margin: auto, auto;
+    width: 100%;
+    background-color: white;
+    border-collapse: collapse;
+}
+
+.server_list tr {
+    padding: 1em;
+}
+
+.server_list tr.profile_row:hover {
+    background-color: #eeeeee;
+}
+
+.server_list td {
+    padding: 1em;
+}
+
+.status-ok-icon {
+    color: green;
+}
+
+.status-notok-icon {
+    color: red;
+}
+
+.status-notok-icon > img {
+    width: 2em;
+}
+
+.status-ok-icon > img {
+    width: 2em;
+}
+
+.delete-x > img {
+    width: 2em;
+}
+
+.autooverflow {
+    overflow-x: auto;
+}
+
+.select-all {
+    text-align: left;
+}
+
+.col-select {
+    width: 2em;
+}

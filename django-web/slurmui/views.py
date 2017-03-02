@@ -84,6 +84,17 @@ def login_view(request):
 
 @login_required
 def user_home(request, user_id=None):
+    # handle logout
+    context = {}
+
+    if request.method == 'GET':
+        request, context = perform_logout(request)
+
+    context.update(get_default_context(request))
+    
+    if not context['logged_in']:
+        return HttpResponseRedirect(reverse('siteindex'))
+    ##
 
     context = get_default_context(request)
 
@@ -160,8 +171,18 @@ def settingspage(request):
 @login_required
 def serversettings_addserver(request):
 
-    # initialize context
+    # handle logout
     context = {}
+
+    if request.method == 'GET':
+        request, context = perform_logout(request)
+
+    context.update(get_default_context(request))
+    
+    if not context['logged_in']:
+        return HttpResponseRedirect(reverse('siteindex'))
+    ##
+    
     profile = None
     url = None
     test_status = None
@@ -173,8 +194,15 @@ def serversettings_addserver(request):
 
     if (request.method == "POST"):
         form = AddSshServerForm(request.POST)
+        
+        form_validated = form.is_valid()
 
-        if form.is_valid():
+        if not form_validated and (len(form.errors.as_data()) == 1 and 'input_password' in form.errors.as_data()):
+            # override password validation
+            form.cleaned_data['input_password'] = request.POST['input_password']
+            form_validated = True
+
+        if form_validated:
             # get input
             server_name = form.cleaned_data['select_name']
             #url = form.cleaned_data['input_url']
@@ -203,7 +231,7 @@ def serversettings_addserver(request):
                 crypt_pw = security.encode_key(security.encrypt_Crypto(password, hashkey))
 
                 # create entry
-                new_data = UserData(owner=request.user, server=server, user_name=crypt_uname, user_password=crypt_pw)
+                new_data = UserData(owner=request.user, profile=profile, server=server, user_name=crypt_uname, user_password=crypt_pw)
                 new_data.save()
 
                 # test connection?
@@ -238,3 +266,42 @@ def serversettings_addserver(request):
     """
     return render(request, 'server_settings_red.html', context=context)
 
+def add_user_data(userdata, loc_user, test=False):
+    
+    profile = userdata['profile']
+    server = userdata['server']
+    username = userdata['username']
+    password = userdata['password']
+    loc_password = userdata['loc_password']
+
+    context = {}
+
+    # look for existing entry with that name
+    if (len(UserData.objects.filter(owner=loc_user, profile=profile))>0):
+        # entry already existed
+        pass
+        error_message = "Profile {} already existed.".format(profile)
+        context.update({'error_message': error_message})
+    else:
+        # encrypt username and password
+        hashkey = security.create_key(loc_user.username, loc_password)
+
+        # encrypt credentials for storage
+        crypt_uname = security.encode_key(security.encrypt_Crypto(username, hashkey))
+        crypt_pw = security.encode_key(security.encrypt_Crypto(password, hashkey))
+
+        # create entry
+        new_data = UserData(owner=loc_user, profile=profile, server=server, user_name=crypt_uname, user_password=crypt_pw)
+        new_data.save()
+
+        if test:
+            # test connection?
+            cdata = comm.ConnectionData(server.server_url, username, password)
+            test_result = comm.test_connection_data(cdata)
+            test_status = test_result.get_success()
+            test_msg = test_result.get_info()
+            
+            context.update({'test_status': test_status,
+            'test_msg': test_msg})
+    
+    return context

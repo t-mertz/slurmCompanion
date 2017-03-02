@@ -15,6 +15,13 @@ class AddSshServerForm(forms.Form):
     input_loc_password = forms.CharField(label="Web Password", required=True, widget=widgets.PasswordInput, 
                         help_text="We need your account password for this website to encrypt your information.")
 
+class ChangeSshServerForm(forms.Form):
+    select_name = forms.ChoiceField(label="Name", choices=RemoteServer.get_installed_servers)
+    input_profile_name = forms.CharField(label="Profile Name")
+    input_username = forms.CharField(label="SSH Username")
+    input_password = forms.CharField(label="SSH Password", widget=widgets.PasswordInput, help_text="Your password and username will be encrypted.")
+
+
 class AddNewSshServerForm(forms.Form):
     input_name = forms.CharField(label="Name", required=True)
     input_url = forms.CharField(label="URL", required=True)

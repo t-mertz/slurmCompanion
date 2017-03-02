@@ -53,10 +53,13 @@
         </li>
         {% if logged_in %}
         <li>
-            <a href={% url 'settingspage' %}>My Account</a>
+            <a href={% url 'userhome' %}>My Account</a>
         </li>
         <li>
-            <a href={% url 'webcmd:cmd' %}>Command Prompt</a>
+            <a href={% url 'settingspage' %}>Settings</a>
+        </li>
+        <li>
+            <a href={% url 'webcmd:index' %}>Command Prompt</a>
         </li>
         <li>
             <a>File Manager</a>
