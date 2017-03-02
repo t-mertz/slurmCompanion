@@ -21,6 +21,11 @@ def index(request):
 
 def clear_cmd(request):
 
+    # determine login status to handle the login/logout forms
+    context = get_default_context(request)
+
+    login_disabled = not context['logged_in']
+    context.update({'login_disabled': login_disabled, })
     
     try:
         del request.session['command_list']
@@ -30,17 +35,19 @@ def clear_cmd(request):
     
 
     form = CmdForm()
-    context = {'cmd_res_list': [[], []],
+    context.update({'cmd_res_list': [[], []],
                'form': form
-              }
+              })
     
-    return render(request, 'webcmd/cmd.html', context=context)
+    #return render(request, 'webcmd/cmd.html', context=context)
+    return HttpResponseRedirect(reverse("cmd/cmd"))
 
 @login_required
-def cmd(request, server_name=None):
+def cmd(request, server_name=None, context=None):
     
-    # determine login status to handle the login/logout forms
-    context = {}
+    if context is None:
+        # determine login status to handle the login/logout forms
+        context = {}
 
     if request.method == 'GET':
         request, context = perform_logout(request)
@@ -49,6 +56,8 @@ def cmd(request, server_name=None):
 
     login_disabled = not context['logged_in']
     context.update({'login_disabled': login_disabled, })
+    if login_disabled:
+        return HttpResponseRedirect(reverse("siteindex"))
     ##
     
     request.session.set_expiry(0)
