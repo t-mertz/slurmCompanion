@@ -7,5 +7,12 @@
 {% endblock %}
 
 {% block content %}
-Content goes here.
+Recent messages (last {{message_display_days}} days):
+{% for msg in recent_messages %}
+    <div class="message">
+        <div class="time_sent">{{msg.time_sent}}</div>
+        <div class="sender">{{msg.sender.username}}</div>
+        <div class="content">{{msg.content}}</div>
+    </div>
+{% endfor %}
 {% endblock %}

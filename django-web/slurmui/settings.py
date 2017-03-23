@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'infopage.apps.InfopageConfig',
     'support.apps.SupportConfig',
     'sshcomm.apps.SshcommConfig',
+    'messenger.apps.MessengerConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

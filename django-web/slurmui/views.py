@@ -26,11 +26,11 @@ def perform_logout(request):
         #print(request.GET)
         if 'logout' in request.GET:
             logout(request)
-        context = {'login_form' : LoginForm(),
+            context = {'login_form' : LoginForm(),
                     'logged_in': False }
-
-        #if request.user.is_authenticated:
-        #    context = {'username' : request.user.username}
+        elif request.user.is_authenticated:
+            #context = {'username' : request.user.username}
+            context.update({'logged_in': True})
     
     return request, context
 
