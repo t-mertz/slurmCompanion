@@ -12,3 +12,9 @@ class Contact(models.Model):
     """
     user = models.ForeignKey(User)
     contact = models.ForeignKey(User)
+
+class UserLoginStatus(models.Model):
+    """Login status of a user."""
+    last_login = models.DateTimeField
+    login_status = models.BooleanField
+    status_hidden = models.BooleanField
