@@ -14,6 +14,12 @@ class Message(models.Model):
     #attachment = models.FileField()
     #flag = models.BigIntegerField() # important
 
+    def asdict(self):
+        return {'content': self.content,
+                'time_sent': self.time_sent,
+                'sender': self.sender,
+                'recipient': self.recipient}
+
 
 def get_recent_messages(user, days=5):
     now = datetime.datetime.now()

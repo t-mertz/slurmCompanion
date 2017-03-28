@@ -1,4 +1,5 @@
 from channels.auth import channel_session_user
+from channels import Channel
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -36,7 +37,8 @@ def send_msg(message):
     #
     # now we send the message to the recipient
     #
-
+    reciever_channel = Channel("/messenger/%s" % recipient_id)
+    reciever_channel.send(new_message.asdict())
 
 
 
