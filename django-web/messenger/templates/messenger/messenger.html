@@ -8,6 +8,7 @@
 
 {% block content %}
 Recent messages (last {{message_display_days}} days):
+<div class="message_list">
 {% for msg in recent_messages %}
     <div class="message">
         <div class="time_sent">{{msg.time_sent}}</div>
@@ -15,4 +16,5 @@ Recent messages (last {{message_display_days}} days):
         <div class="content">{{msg.content}}</div>
     </div>
 {% endfor %}
+</div>
 {% endblock %}
