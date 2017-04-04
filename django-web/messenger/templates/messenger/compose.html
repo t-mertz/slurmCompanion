@@ -1,0 +1,14 @@
+{% extends 'navigation.html' %}
+
+{% load static %}
+
+{% block title %}
+<title>SLURM Companion - Messenger</title>
+{% endblock %}
+
+{% block content %}
+<form id="compose_message_form" action="" method="POST">
+    {{ form.as_p() }}
+    <button type="submit" value="Send" />
+</form>
+{% endblock %}

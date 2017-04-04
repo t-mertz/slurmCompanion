@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 
 from slurmui.views import get_default_context
 from .models import get_recent_messages
+from .forms import NewMessageForm
 
 # Create your views here.
 
@@ -17,6 +18,15 @@ def messenger(request):
                     'message_display_days': message_display_days})
 
     return render(request, 'messenger/messenger.html', context=context)
+
+@login_required
+def compose(request):
+    context = get_default_context(request)
+
+    message_form = NewMessageForm()
+    context.update({'message_form': message_form})
+
+    return render(request, 'messenger/compose.html', context=context)
 
 def messenger_session(request, user_id):
     """Messenger session with a paticular user.
