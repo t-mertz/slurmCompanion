@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect
 
 from slurmui.views import get_default_context
 from .models import get_recent_messages
@@ -23,8 +24,11 @@ def messenger(request):
 def compose(request):
     context = get_default_context(request)
 
-    message_form = NewMessageForm()
-    context.update({'message_form': message_form})
+    if request.method == "GET":
+        message_form = NewMessageForm()
+        context.update({'message_form': message_form})
+    else:
+        return HttpResponseRedirect("messenger")
 
     return render(request, 'messenger/compose.html', context=context)
 

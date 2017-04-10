@@ -10,7 +10,7 @@ class Message(models.Model):
     time_sent = models.DateTimeField()
     sender = models.ForeignKey(User, related_name='+')
     recipient = models.ForeignKey(User, related_name='+') # make one-to-many?
-    read = models.BooleanField() # has been read by recipient?
+    read = models.BooleanField(default=False) # has been read by recipient?
     #title = models.CharField()
     #attachment = models.FileField()
     #flag = models.BigIntegerField() # important

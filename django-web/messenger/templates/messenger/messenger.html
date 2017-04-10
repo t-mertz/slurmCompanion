@@ -16,5 +16,6 @@ Recent messages (last {{message_display_days}} days):
         <div class="content">{{msg.content}}</div>
     </div>
 {% endfor %}
+<a href={% url 'messenger:compose' %}>Compose</a>
 </div>
 {% endblock %}
