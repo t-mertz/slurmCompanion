@@ -10,8 +10,8 @@ class Contact(models.Model):
     This a one-sided relationship. Adding a UserB as contact to
     UserA does not add UserA as contact to UserB.
     """
-    user = models.ForeignKey(User)
-    contact = models.ForeignKey(User)
+    user = models.ForeignKey(User, related_name='thisuser')
+    contact = models.ForeignKey(User, related_name='otheruser')
 
 class UserLoginStatus(models.Model):
     """Login status of a user."""

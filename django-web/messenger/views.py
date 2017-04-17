@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 from slurmui.views import get_default_context
 from .models import get_recent_messages
 from .forms import NewMessageForm
+from accounts.models import Contact
 
 # Create your views here.
 
@@ -25,7 +26,14 @@ def compose(request):
     context = get_default_context(request)
 
     if request.method == "GET":
-        message_form = NewMessageForm()
+        #contacts = Contact.objects.filter(user=request.user)
+        #contact_choices = [contact.username for contact in contacts]
+        # add self. this should appear as a default contact in the database
+        #contact_choices += [request.user.username]
+
+        #print(contact_choices)
+
+        message_form = NewMessageForm(user=request.user)
         context.update({'message_form': message_form})
     else:
         return HttpResponseRedirect("messenger")

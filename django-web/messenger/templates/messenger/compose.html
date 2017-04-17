@@ -7,7 +7,8 @@
 {% endblock %}
 
 {% block content %}
-<form id="compose_message_form" action="" method="POST">
+<form id="compose_message_form" action="{% url 'messenger:messengerhome' %}" method="POST">
+    {% csrf_token %}
     {{ message_form.as_p }}
     <input type="submit" value="Send" />
 </form>

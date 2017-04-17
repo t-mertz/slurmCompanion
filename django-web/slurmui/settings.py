@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'support.apps.SupportConfig',
     'sshcomm.apps.SshcommConfig',
     'messenger.apps.MessengerConfig',
+    'accounts.apps.AccountsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
