@@ -36,6 +36,7 @@ def compose(request):
         message_form = NewMessageForm(user=request.user)
         context.update({'message_form': message_form})
     else:
+        # store the message here
         return HttpResponseRedirect("messenger")
 
     return render(request, 'messenger/compose.html', context=context)

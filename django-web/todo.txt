@@ -8,3 +8,8 @@ server availability
 last login
 
 search for users (similarity search, machine learning?)
+
+
+Messenger:
+messages are not stored
+recent messages = messages from the last X days (now) -> last X messages
