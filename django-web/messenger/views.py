@@ -1,9 +1,12 @@
+import datetime
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
+from django.contrib.auth.models import User
+from django.urls import reverse
 
 from slurmui.views import get_default_context
-from .models import get_recent_messages
+from .models import get_recent_messages, Message
 from .forms import NewMessageForm
 from accounts.models import Contact
 
@@ -35,9 +38,36 @@ def compose(request):
 
         message_form = NewMessageForm(user=request.user)
         context.update({'message_form': message_form})
-    else:
-        # store the message here
-        return HttpResponseRedirect("messenger")
+    elif request.method == "POST":
+        print("POST: " + str(request.POST))
+        form = NewMessageForm(request.POST)
+
+        if form.is_valid():
+            content = form.cleaned_data['msg_text']
+            recipient = form.cleaned_data['recipient']
+            time_sent = datetime.datetime.now()
+            sender = request.user
+            # store the message here
+            new_message = Message(content=content,
+                                  time_sent=time_sent,
+                                  sender=sender,
+                                  recipient=recipient
+                                 )
+            new_message.save()
+        else:
+            print("Not valid!")
+            content = request.POST['msg_text']
+            recipient = User.objects.get(id=request.POST['recipient'])
+            time_sent = datetime.datetime.now()
+            sender = request.user
+            # store the message here
+            new_message = Message(content=content,
+                                  time_sent=time_sent,
+                                  sender=sender,
+                                  recipient=recipient
+                                 )
+            new_message.save()
+        return HttpResponseRedirect(reverse("messenger:messengerhome"))
 
     return render(request, 'messenger/compose.html', context=context)
 

@@ -26,7 +26,7 @@ def get_recent_messages(user, days=5):
     now = datetime.datetime.now()
     delta = datetime.timedelta(days=days)
     earliest_date = now - delta
-    return Message.objects.filter(recipient=user, time_sent__gte=earliest_date)
+    return Message.objects.filter(recipient=user, time_sent__gte=earliest_date).order_by('-time_sent')
 
 
 class MessageSettings(models.Model):
