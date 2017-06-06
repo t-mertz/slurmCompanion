@@ -1,13 +1,27 @@
 {% extends 'navigation.html' %}
 
+
 {% load static %}
+
+{% block scripts %}
+<script type="text/javascript" src="{% static 'messenger/js/messenger.js' %}"></script>
+{% endblock %}
 
 {% block title %}
 <title>SLURM Companion - Messenger</title>
 {% endblock %}
 
 {% block content %}
-Recent messages (last {{message_display_days}} days):
+Recent messages (last {{message_display_days}} days): 
+<span id="age_selector">
+    <select id="range_selector" onchange="retrieve_message_list()">
+        <option value=7 selected="selected">Last 7 days</option>
+        <option value=14>Last two weeks</option>
+        <option value=30>Last month</option>
+        <option value=90>Last 3 months</option>
+        <option value=365>Last year</option>
+    </select>
+</span>
 <div class="message_list">
 {% for msg in recent_messages %}
     <div class="message">

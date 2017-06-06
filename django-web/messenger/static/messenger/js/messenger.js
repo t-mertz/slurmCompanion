@@ -1,4 +1,14 @@
 
+/** This function is called when the user selects an option from the
+ * filter <select> tag
+ */
+function retrieve_message_list() {
+    //var days = $('#age_selector > selector').value; // oldest age of message to be displayed in days
+    var days = document.getElementById("range_selector").value;
+
+    console.log("Requesting messages up to " + days.toString() + " days old.");
+}
+
 
 function create_div_from_message_dict(dict) {
     var new_message_element = document.createElement('div');
@@ -19,6 +29,8 @@ function create_div_from_message_dict(dict) {
     return new_message_element;
 }
 
+/*
+
 // decode the message sent via the websocket
 var dict = 0;
 
@@ -29,3 +41,4 @@ var new_message_element = create_div_from_message_dict(dict);
 var message_list_element = document.getElementsByClassName('message_list');
 // append message to the message list
 message_list_element.appendChild(new_message_element);
+*/
